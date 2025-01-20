@@ -7,7 +7,7 @@ const PORT = 5000;
 
 // CORS 설정 (특정 출처만 허용)
 app.use(cors({
-  origin: 'http://localhost:3000' // React 앱 URL
+  origin: ['http://localhost:3000', 'http://localhost:3001'], // React 앱의 모든 URL 허용
 }));
 
 // JSON 요청 본문 처리
