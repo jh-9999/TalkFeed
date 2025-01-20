@@ -59,7 +59,7 @@ function Main({ user, handleclick,isSpecial,isVip }) {
       {(isSpecial || isVip) && 
         isVip ? <span>***isVip***</span> : isSpecial ? <span>***isSpecial***</span> : null }
       <span>{user || "Guest"}</span>
-      <p>안녕하세요 임혜진</p>
+      <p>안녕하세요!!!</p>
 
 
     </div>
