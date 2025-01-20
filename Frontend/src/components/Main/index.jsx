@@ -59,6 +59,7 @@ function Main({ user, handleclick,isSpecial,isVip }) {
       {(isSpecial || isVip) && 
         isVip ? <span>***isVip***</span> : isSpecial ? <span>***isSpecial***</span> : null }
       <span>{user || "Guest"}</span>
+      <p>12</p>
 
     </div>
   )
