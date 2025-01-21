@@ -60,7 +60,8 @@ function Main({ user, handleclick,isSpecial,isVip }) {
         isVip ? <span>***isVip***</span> : isSpecial ? <span>***isSpecial***</span> : null }
       <span>{user || "Guest"}</span>
       
-      <p>이름</p>
+      
+      <p>안녕</p>
 
 
     </div>
