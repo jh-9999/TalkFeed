@@ -63,6 +63,7 @@ function Main() {
         </div>
       )}
       <p>안녕</p>
+      <p>안녕</p>
     </div>
   );
 }
