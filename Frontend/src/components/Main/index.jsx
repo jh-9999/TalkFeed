@@ -1,71 +1,69 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import "./style.css"
+import "./style.css"; // CSS 파일 불러오기
 
-function Main({ user, handleclick,isSpecial,isVip }) {
+function Main() {
+  const [topic, setTopic] = useState('');
+  const [summary, setSummary] = useState('');
+  const [response, setResponse] = useState(null);
 
-    const [input, setInput] = useState('');
-    const [response, setResponse] = useState(null);
-    const usernameText = user || "Stranger"
-  
-    const handleInputChange = (e) => {
-      setInput(e.target.value);
-    };
-  
-    const handleSubmit = async () => {
-      try {
-        // Node.js 서버를 통해 FastAPI 호출
-        const res = await axios.post('http://localhost:5000/ai/predict', { input });
-        setResponse(res.data); // FastAPI 응답 데이터 설정
-      } catch (error) {
-        console.error('Error:', error.message);
-        setResponse({ error: 'An error occurred while processing the request.' });
-      }
-    };
+  const handleTopicChange = (e) => {
+    setTopic(e.target.value);
+  };
 
+  const handleSummaryChange = (e) => {
+    setSummary(e.target.value);
+  };
+
+  const handleSubmit = async () => {
+    if (!topic.trim() || !summary.trim()) {
+      setResponse({ error: 'Please enter both the topic and a summary.' });
+      return;
+    }
+
+    try {
+      const res = await axios.post('http://localhost:5000/ai/predict', { topic, summary });
+      setResponse(res.data.script); // OpenAI에서 반환된 스크립트 설정
+    } catch (error) {
+      console.error('Error:', error.message);
+      setResponse({ error: 'Failed to generate script. Please try again.' });
+    }
+  };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Frontend to Backend to AI</h1>
-      <input
-        type="text"
-        placeholder="Enter some data"
-        value={input}
-        onChange={handleInputChange}
-        style={{ padding: '10px', width: '300px', fontSize: '16px' }}
+    <div className="Title_main">
+      <h1>Script Generator</h1>
+      <textarea
+        value={topic}
+        onChange={handleTopicChange}
+        placeholder="Enter the presentation topic"
+        className="input_text"
+        rows="3"
       />
       <br />
-      <button
-        onClick={handleSubmit}
-        style={{
-          padding: '10px 20px',
-          marginTop: '20px',
-          fontSize: '16px',
-          cursor: 'pointer',
-        }}
-      >
-        Submit
-      </button>
+      <textarea
+        value={summary}
+        onChange={handleSummaryChange}
+        placeholder="Enter a brief summary of the presentation"
+        className="input_text"
+        rows="5"
+      />
       <br />
+      <button onClick={handleSubmit} className="click_button">
+        Generate Script
+      </button>
       {response && (
-        <div style={{ marginTop: '20px' }}>
-          <h3>Response:</h3>
-          <pre>{JSON.stringify(response, null, 2)}</pre>
+        <div className="res_main">
+          <h3>Generated Script:</h3>
+          {response.error ? (
+            <span className="res_err">{response.error}</span>
+          ) : (
+            <pre className="script_text">{response}</pre>
+          )}
         </div>
       )}
-      <br/>
-      <p onClick={handleclick}>{usernameText}</p>
-      {isSpecial && <span>***Special***</span>}
-      {(isSpecial || isVip) && 
-        isVip ? <span>***isVip***</span> : isSpecial ? <span>***isSpecial***</span> : null }
-      <span>{user || "Guest"}</span>
-      
-      
-      <p>안녕</p>
-
-
     </div>
-  )
+  );
 }
 
-export default Main
+export default Main;
