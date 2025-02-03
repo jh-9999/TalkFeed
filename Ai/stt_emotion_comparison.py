@@ -5,10 +5,6 @@ from plotly.subplots import make_subplots
 import numpy as np
 from scipy.ndimage import gaussian_filter1d
 
-# font_path = "C:/Windows/Fonts/malgun.ttf"
-# font_prop = fm.FontProperties(fname=font_path, size=12)
-# plt.rcParams['font.family'] = font_prop.get_name()
-
 ### 1️⃣ 감정 분석 (DeepFace)
 def analyze_video_with_feedback(video_path, output_file="feedback.txt"):
     try:
