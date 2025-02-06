@@ -1,8 +1,9 @@
 import Main from './components/Main';
+import './App.css';
 
 const App = () => {
   return (
-    <div>
+    <div className="app-container">
       <Main />
     </div>
   );
