@@ -13,7 +13,16 @@ import {
   Filler,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 const Gesture = () => {
   const [gestureCount, setGestureCount] = useState(0);
@@ -107,7 +116,9 @@ const Gesture = () => {
       {/* Current Gesture Count */}
       <div className="bg-gray-800 shadow-xl rounded-lg py-4 px-8 mb-8 w-11/12 md:w-1/2">
         <p className="text-xl text-gray-300 text-center">
-          <span className="font-bold text-green-400">Current Gesture Count:</span>{' '}
+          <span className="font-bold text-green-400">
+            Current Gesture Count:
+          </span>{' '}
           <span className="text-2xl text-blue-400">{gestureCount}</span>
         </p>
       </div>
