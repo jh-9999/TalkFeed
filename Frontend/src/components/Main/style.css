@@ -1,20 +1,46 @@
+/* 아이폰 13 사이즈 최적화 CSS */
+@media screen and (max-width: 390px) {
+  body {
+    font-size: 14px;
+  }
+
+  .container-fluid {
+    padding: 10px !important;
+  }
+
+  textarea {
+    font-size: 14px;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
+.mobile-modal {
+  width: 90%;
+  max-width: 350px;
+  max-height: 80vh;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+
 .modal {
   background: white;
-  padding: 20px;
+  padding: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: block;
-  width: 600px;
-  max-height: 75%;
-  position: absolute; /* 수정: absolute로 변경 */
-  top: 50%; /* 초기값 */
-  left: 50%; /* 초기값 */
-  transform: none; /* 중앙 정렬 제거 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .modal-header {
   padding: 10px;
-  cursor: move; /* 드래그 가능한 영역 표시 */
+  cursor: move;
   color: #000;
 }
 
@@ -25,43 +51,30 @@
 
 .modal_content h2 {
   margin-top: 0;
-  font-size: 1.5rem;
-  text-align: center; /* 제목 중앙 정렬 */
+  text-align: center;
 }
 
 .modal_content ol {
-  padding-left: 20px;
-  margin-top: 20px;
+  padding-left: 15px;
+  margin-top: 15px;
 }
 
 .modal_content ol li {
-  margin-bottom: 10px;
-  line-height: 1.6; /* 줄 간격 조정 */
+  margin-bottom: 8px;
+  line-height: 1.5;
 }
 
 .modal_content button {
   display: block;
-  margin: 20px auto 0;
-  padding: 10px 20px;
-  border-radius: 8px;
-  background-color: #007bff;
-  color: white;
-  font-size: 1rem;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin: 15px auto 0;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 0.9rem;
 }
 
-.modal_content button:hover {
-  background-color: #0056b3;
-}
-
-/* 기본 레이아웃 */
-.container {
+.container-fluid {
   background-color: #f8f9fa;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  position: static; /* 또는 position 속성 제거 */
-  overflow: visible;
 }
 
 textarea {
@@ -69,43 +82,11 @@ textarea {
 }
 
 .script-output {
-  font-size: 1rem;
-  white-space: pre-wrap; /* 줄바꿈 유지 */
-  word-wrap: break-word; /* 긴 단어 줄바꿈 */
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 button:disabled {
   cursor: not-allowed;
-}
-
-/* 버튼 스타일 */
-.click_button {
-  padding: 10px 20px;
-  margin-top: 10px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.guide_button {
-  margin-top: 10px;
-}
-
-/* 제목 및 출력 스타일 */
-.Title_main {
-  text-align: center;
-  margin-top: 50px;
-}
-
-.input_text {
-  padding: 10px;
-  width: 100%;
-  font-size: 16px;
-}
-
-.res_main {
-  margin-top: 20px;
-}
-
-.res_err {
-  color: red;
 }
