@@ -8,9 +8,14 @@ function Scripts() {
 
     // ✅ 모달 닫고 다음 페이지로 이동하는 함수
     const handleNextPage = () => {
-    setShowModal(false); // ✅ 모달 닫기
-    navigate("/createscripts"); // ✅ 즉시 페이지 이동
-};
+        setShowModal(false); // ✅ 모달 닫기
+        navigate("/create-scripts"); // ✅ 즉시 페이지 이동
+    };
+
+    // ✅ 완료 버튼 클릭 시 UploadVideo.jsx로 이동
+    const handleUploadVideo = () => {
+        navigate("/uploadvideo"); // ✅ 즉시 페이지 이동
+    };
 
     return (
         <div className={`scripts-container ${showModal ? "modal-active" : ""}`}>
@@ -18,7 +23,10 @@ function Scripts() {
 
             <textarea className="scripts-textarea" placeholder="스크립트 입력"></textarea>
 
-            <button className="scripts-button">완료</button>
+            {/* ✅ 완료 버튼 (UploadVideo.jsx로 이동) */}
+            <button className="scripts-button" onClick={handleUploadVideo}>
+                완료
+            </button>
 
             {/* ✅ 스크립트 생성 버튼 (모달 열기) */}
             <div className="scripts-create" onClick={() => setShowModal(true)}>

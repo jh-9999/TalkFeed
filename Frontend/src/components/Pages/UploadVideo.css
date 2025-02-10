@@ -1,0 +1,81 @@
+/* 전체 컨테이너 */
+.video-container {
+    width: 375px;
+    height: 812px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+/* 제목 스타일 */
+.video-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    align-self: flex-start;
+}
+
+/* 업로드된 발표 영상 박스 */
+.video-upload-box {
+    width: 100%;
+    max-width: 340px;
+    height: 300px;
+    background-color: #f3f4f6;
+    padding: 1rem;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    resize: none;
+    outline: none;
+    margin-bottom: 1rem;
+}
+
+/* 완료 버튼 */
+.video-complete-button {
+    width: 100%;
+    max-width: 340px;
+    background-color: #f8b6a0;
+    color: black;
+    padding: 0.8rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    font-weight: bold;
+}
+
+/* 비디오 녹화 버튼 */
+.video-record-section {
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    cursor: pointer;
+    position: relative; /* ✅ 개별 이동 가능하도록 설정 */
+    top: 220px;
+}
+
+/* 비디오 녹화 아이콘 */
+.record-icon span {
+    color: red;
+    font-size: 1.3rem;
+}
+
+/* 비디오 녹화 텍스트 */
+.video-record-text {
+    font-size: 1rem;
+}
+
+/* 아이콘 스타일 */
+.material-icons {
+    font-size: 1.3rem;
+    color: black;
+}

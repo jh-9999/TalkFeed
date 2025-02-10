@@ -7,6 +7,9 @@ import Welcome from "./components/Pages/Welcome";
 import Home from "./components/Pages/Home";
 import Scripts from "./components/Pages/Scripts";
 import CreateScripts from "./components/Pages/CreateScripts";
+import CreateScriptsOutput from "./components/Pages/CreateScriptsOutput";
+import UploadVideo from "./components/Pages/UploadVideo";
+import RecordVideo from "./components/Pages/RecordVideo";
 import { BrowserRouter as Router, Routes, Route  } from 'react-router-dom';
 
 const App = () => {
@@ -20,6 +23,10 @@ const App = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/scripts" element={<Scripts />} />
         <Route path="/create-scripts" element={<CreateScripts />} />
+        <Route path="/create-scripts-output" element={<CreateScriptsOutput />} />
+        <Route path="/upload" element={<UploadVideo />} />
+        <Route path="/uploadvideo" element={<UploadVideo />} />
+        <Route path="/record" element={<RecordVideo />} />
       </Routes>
       <Main />
       
