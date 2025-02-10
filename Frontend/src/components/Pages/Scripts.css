@@ -1,0 +1,145 @@
+/* 전체 컨테이너 */
+.scripts-container {
+    width: 375px;
+    height: 812px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+/* 페이지 제목 */
+.scripts-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    align-self: flex-start;
+}
+
+/* 스크립트 입력 박스 */
+.scripts-textarea {
+    width: 100%;
+    max-width: 340px;
+    height: 300px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    font-size: 1rem;
+    resize: none;
+    background-color: #f3f4f6;
+    outline: none;
+    margin-bottom: 1rem;
+}
+
+/* 완료 버튼 */
+.scripts-button {
+    width: 100%;
+    max-width: 340px;
+    background-color: #cce7ef;
+    color: black;
+    padding: 0.8rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 2rem;
+}
+
+/* 스크립트 생성 버튼 */
+.scripts-create {
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    cursor: pointer;
+    position: relative; /* ✅ 개별 이동 가능하도록 설정 */
+    top: 220px;
+}
+
+/* 스크립트 생성 텍스트 */
+.scripts-create-text {
+    font-size: 1rem;
+}
+
+/* 아이콘 스타일 */
+.material-icons {
+    font-size: 1.3rem;
+    color: #444;
+}
+
+/* ✅ 모달 활성화 시 배경 흐리게 */
+.modal-active {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* ✅ 바텀 시트 모달 오버레이 */
+.modal-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 100;
+}
+
+/* ✅ 바텀 시트 컨텐츠 */
+.modal-content {
+    width: 100%;
+    height: 15%;
+    max-width: 375px;
+    background: white;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    top: -28rem;
+}
+
+/* ✅ 모달 헤더 */
+.modal-header {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+/* ✅ 아이콘 스타일 */
+.modal-header .material-icons {
+    font-size: 1.3rem;
+    margin-right: 5px;
+}
+
+/* ✅ 모달 설명 */
+.modal-description {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* ✅ "다음" 버튼 스타일 */
+.modal-next-button {
+    width: 100%;
+    background-color: #cce7ef;
+    color: black;
+    padding: 0.8rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+.modal-next-button:hover {
+    background-color: #a6d5e5;
+}
