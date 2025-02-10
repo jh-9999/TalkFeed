@@ -1,0 +1,76 @@
+/* 전체 컨테이너 */
+.scripts-output-container {
+    width: 375px;
+    height: 812px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+/* 제목 스타일 */
+.scripts-output-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    align-self: flex-start;
+}
+
+/* 생성된 스크립트 박스 */
+.scripts-output-box {
+    width: 100%;
+    max-width: 340px;
+    height: 430px;
+    background-color: #f3f4f6;
+    padding: 1rem;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    resize: none;
+    outline: none;
+    margin-bottom: 1rem;
+}
+
+/* 스크립트 재생 버튼 */
+.scripts-replay-button {
+    width: 100%;
+    max-width: 340px;
+    background-color: #cce7ef;
+    color: black;
+    padding: 0.8rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+/* 발표 영상 업로드 버튼 */
+.scripts-upload-button {
+    width: 100%;
+    max-width: 340px;
+    background-color: #f8b6a0;
+    color: black;
+    padding: 1rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.scripts-upload-button:hover {
+    background-color: #f19c87;
+}
+
+/* 아이콘 스타일 */
+.material-icons {
+    font-size: 1.3rem;
+    color: black;
+}

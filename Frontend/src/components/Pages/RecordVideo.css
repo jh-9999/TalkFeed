@@ -1,5 +1,5 @@
 /* 전체 컨테이너 */
-.create-scripts-container {
+.record-container {
     width: 375px;
     height: 812px;
     margin: 0 auto;
@@ -10,49 +10,34 @@
     padding: 2rem 1rem;
 }
 
-/* 페이지 제목 */
-.create-scripts-title {
+/* 제목 스타일 */
+.record-title {
     font-size: 1.8rem;
     font-weight: bold;
     margin-bottom: 1.5rem;
     align-self: flex-start;
 }
 
-/* 입력 박스 스타일 */
-.create-scripts-textarea {
+/* 실시간 녹화 화면 박스 */
+.record-box {
     width: 100%;
     max-width: 340px;
-    height: 130px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
+    height: 300px;
+    background-color: #f3f4f6;
     padding: 1rem;
+    border-radius: 12px;
+    border: none;
     font-size: 1rem;
     resize: none;
-    background-color: #f3f4f6;
     outline: none;
     margin-bottom: 1rem;
 }
 
-.create-scripts-textarea2 {
+/* 녹화 시작 버튼 */
+.record-button {
     width: 100%;
     max-width: 340px;
-    height: 250px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    padding: 1rem;
-    font-size: 1rem;
-    resize: none;
-    background-color: #f3f4f6;
-    outline: none;
-    margin-bottom: 1rem;
-}
-
-
-/* 스크립트 생성 버튼 */
-.create-scripts-button {
-    width: 100%;
-    max-width: 340px;
-    background-color: #cce7ef;
+    background-color: #f8b6a0;
     color: black;
     padding: 0.8rem;
     border-radius: 9999px;
@@ -60,11 +45,5 @@
     border: none;
     text-align: center;
     cursor: pointer;
-    margin-top: 1rem;
+    font-weight: bold;
 }
-
-.create-scripts-button:hover {
-    background-color: #a6d5e5;
-}
-
-
