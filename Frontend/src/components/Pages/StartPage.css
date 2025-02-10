@@ -1,0 +1,129 @@
+/* Home.css */
+.app-container {
+    width: 375px;
+    height: 812px;
+    margin: 0 auto;
+    background-color: #f5f5f5;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f3f4f6;
+    padding: 1rem;
+    position: relative;
+}
+
+.card {
+    position: absolute;
+    width: 100%;
+    max-width: 375px;
+    min-height: 815px;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: -28rem;
+}
+
+.home-text {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+.bg-gray { background-color: #F8F3C4; }
+.bg-green { background-color: #C1E4E9; }
+.bg-blue { background-color: #F4AA9A; }
+
+.large { width: 250px; height: 250px; }
+.medium { width: 300px; height: 300px; }
+.small { width: 130px; height: 130px; }
+
+.top-right { top: -50px; right: -15px; }
+.top-left { top: 240px; left: -20px; }
+.bottom-right { bottom: -60px; right: -60px; }
+.bottom-left { bottom: 20px; left: -20px; }
+
+/* TalkFeed를 배경 원과 동일한 위치로 조정 */
+.text-container {
+    position: absolute;
+    top: 240px; /* 배경 원과 동일한 위치 */
+    left: -20px;
+    text-align: center;
+    width: 100%;
+    max-width: 230px;
+    transform: none; /* 기존 중앙 정렬 제거 */
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 0.75rem;
+    transform: rotate(-15deg);
+    margin-bottom: 0.5rem;
+}
+
+.curved-text {
+    position: absolute;
+    top: 195px; /* 더 자연스럽게 배치 */
+    left: 24%;
+    transform: translateX(-50%);
+    width: 350px;
+    height: 160px;
+    fill: #374151; /* 글씨 색상 */
+    font-size: 16px;
+    font-weight: bold;
+    writing-mode: horizontal-tb; /* 수직 텍스트 */
+    glyph-orientation-vertical: 0; /* 회전 방향 조정 */
+}   
+
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-top: 7rem;
+    margin-left: 65px;
+}
+
+.start-button {
+    margin-top: 33rem;
+    width: 100%;
+    max-width: 320px;
+    background-color: #bfdbfe;
+    color: #374151;
+    padding: 0.75rem;
+    border-radius: 9999px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    border: none;
+    position: relative;
+    z-index: 3;
+}
+
+.start-button:hover {
+    background-color: #93c5fd;
+}
+
+.arrow {
+    margin-left: 0.5rem;
+}

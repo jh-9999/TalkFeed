@@ -1,0 +1,56 @@
+/* ✅ 전체 컨테이너 */
+.create-scripts-container {
+    display: flex;
+    width: 375px;
+    height: 812px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    display: flex; /* ✅ display가 none이면 안 보임 */
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    opacity: 1; /* ✅ opacity가 0이면 안 보임 */
+}
+
+
+/* ✅ 페이지 제목 */
+.create-scripts-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    align-self: flex-start;
+}
+
+/* ✅ 스크립트 입력 박스 */
+.create-scripts-textarea {
+    width: 100%;
+    max-width: 340px;
+    height: 120px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    font-size: 1rem;
+    resize: none;
+    background-color: #f3f4f6;
+    outline: none;
+    margin-bottom: 1rem;
+}
+
+/* ✅ 생성 버튼 */
+.create-scripts-button {
+    width: 100%;
+    max-width: 340px;
+    background-color: #cce7ef;
+    color: black;
+    padding: 0.8rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.create-scripts-button:hover {
+    background-color: #a6d5e5;
+}
