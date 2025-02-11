@@ -1,35 +1,52 @@
-import React from "react";
+import React, { useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import "./CreateScriptsOutput.css";
 
 function CreateScriptsOutput() {
     const navigate = useNavigate();
+    const script = localStorage.getItem("generatedScript") || "";
+    const [errorMessage, setErrorMessage] = useState("");
 
-    // 🔹 스크립트 재생성 버튼 클릭 시 CreateScripts.jsx로 이동
-    const handleReplay = () => {
-        navigate("/create-scripts"); // ✅ 즉시 이동
+    // 스크립트를 파일로 다운로드한 후 업로드 페이지로 이동하는 함수
+    const handleDownloadScript = () => {
+        if (!script.trim()) {
+            setErrorMessage("다운로드할 스크립트가 없습니다.");
+            return;
+        }
+        setErrorMessage("");
+        const blob = new Blob([script], { type: "text/plain;charset=utf-8" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "script.txt"; // 다운로드될 파일명 지정
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        // 다운로드 후 /uploadvideo 페이지로 이동
+        navigate("/uploadvideo");
     };
 
     return (
         <div className="scripts-output-container">
             <h1 className="scripts-output-title">Scripts</h1>
 
-            {/* 🔹 생성된 스크립트 박스 */}
             <textarea 
                 className="scripts-output-box"
-                placeholder="생성된 스크립트"
+                value={script || "스크립트가 없습니다."}
                 readOnly
             />
 
-            {/* 🔹 스크립트 재생성 버튼 */}
-            <button className="scripts-replay-button" onClick={handleReplay}>
-                스크립트 재생성
+            {/* 완료 버튼: 클릭 시 스크립트를 파일로 다운로드하고 /uploadvideo로 이동 */}
+            <button className="scripts-button" onClick={handleDownloadScript}>
+                완료
             </button>
 
-            {/* 🔹 발표 영상 업로드 및 녹화 버튼 */}
-            <button className="scripts-upload-button" onClick={() => navigate("/upload")}>
-                <span className="material-icons">videocam</span> 발표 영상 업로드 및 녹화 
-                <span className="material-icons">arrow_forward</span>
+            {errorMessage && <div className="error-message">{errorMessage}</div>}
+
+            {/* 스크립트 재생성 버튼: 클릭 시 /create-scripts 페이지로 이동 */}
+            <button className="scripts-replay-button" onClick={() => navigate("/create-scripts")}>
+                스크립트 재생성
             </button>
         </div>
     );
