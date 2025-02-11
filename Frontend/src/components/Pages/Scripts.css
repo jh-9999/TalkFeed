@@ -22,7 +22,7 @@
 .scripts-textarea {
     width: 100%;
     max-width: 340px;
-    height: 300px;
+    height: 440px;
     border-radius: 12px;
     border: 1px solid #ddd;
     padding: 1rem;
@@ -59,7 +59,7 @@
     border-top: 1px solid #ddd;
     cursor: pointer;
     position: relative; /* ✅ 개별 이동 가능하도록 설정 */
-    top: 220px;
+    top: 100px;
 }
 
 /* 스크립트 생성 텍스트 */
@@ -95,7 +95,7 @@
 /* ✅ 바텀 시트 컨텐츠 */
 .modal-content {
     width: 100%;
-    height: 15%;
+    height: 17%;
     max-width: 375px;
     background: white;
     border-top-left-radius: 16px;
@@ -103,7 +103,7 @@
     padding: 1rem;
     box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
-    top: -28rem;
+    top: -23rem;
 }
 
 /* ✅ 모달 헤더 */
