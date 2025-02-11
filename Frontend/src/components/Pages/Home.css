@@ -76,7 +76,7 @@
     font-size: 1rem;
     margin-bottom: 1rem;
     position: relative; /*  말풍선 꼬리를 위한 설정 */
-    top: -30px;
+    top: -5px;
     z-index: 3;
 }
 
@@ -109,7 +109,7 @@
     cursor: pointer;
     border: none;
     position: relative; /* ✅ 개별 이동 가능하도록 설정 */
-    top: -30px;
+    top: -5px;
 }
 
 .home-button:hover {
