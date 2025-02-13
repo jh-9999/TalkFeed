@@ -1,44 +1,77 @@
 import os
-import whisper
+import streamlit as st
+from dotenv import load_dotenv
+from openai import OpenAI
 
-# FFmpeg 경로 설정 (FFmpeg이 설치된 경로 추가)
-os.environ["PATH"] += os.pathsep + r"C:\Users\zordi\Desktop\ffmpeg-2025-01-20-git-504df09c34-essentials_build\bin"
+# ✅ .env 파일 로드 (API 키 불러오기)
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
 
-# 📥 Whisper 모델 로드 (한 번만 로드하여 속도 최적화)
-print("📥 Whisper 모델 로드 중... (처음 한 번만 로드)")
-model = whisper.load_model("base")  # "tiny", "base", "small" 선택 가능
+if not api_key:
+    raise ValueError("❌ 오류: OpenAI API 키가 설정되지 않았습니다. .env 파일을 확인하세요.")
 
-def transcribe_audio(audio_path):
-    """
-    주어진 오디오 파일을 STT로 변환하는 함수
-    - 모델을 매번 로드하지 않고 재사용
-    """
-    print(f"🎙️ {audio_path} 음성을 텍스트로 변환 중...")
+# ✅ OpenAI 클라이언트 설정
+client = OpenAI(api_key=api_key)
 
-    result = model.transcribe(
-        audio_path,
-        language="ko",  # 한국어 지정
-        temperature=0,  # 더 정확한 결과를 위해
-        fp16=False,  # CPU 환경 최적화 (True 사용 시 GPU 가속)
-        verbose=True,  # 터미널에 변환 진행 상황 표시
-    )
+# ✅ Streamlit UI
+st.title("🎙️ Whisper STT 변환 & 검토 시스템")
 
-    # 📌 타임스탬프 + 문장 정리
-    formatted_text = ""
-    for segment in result["segments"]:
-        start_time = segment["start"]
-        end_time = segment["end"]
-        text = segment["text"]
-        formatted_text += f"[{start_time:.2f} ~ {end_time:.2f}] {text}\n\n"
+# ✅ MP3 파일 경로 입력
+audio_path = st.text_input("🎵 MP3 파일 경로를 입력하세요:", "")
 
-    # 📝 변환된 텍스트 저장
-    output_file = f"{audio_path}.txt"
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(formatted_text)
+if "transcription_text" not in st.session_state:
+    st.session_state.transcription_text = ""
 
-    print(f"✅ 변환 완료! 결과 저장: {output_file}")
+if st.button("🔄 변환 시작"):
+    if not os.path.exists(audio_path):
+        st.error("❌ 오류: 입력한 파일이 존재하지 않습니다. 올바른 경로를 입력하세요.")
+    else:
+        try:
+            with open(audio_path, "rb") as audio_file:
+                # ✅ Whisper API 실행
+                transcription = client.audio.transcriptions.create(
+                    model="whisper-1",
+                    file=audio_file,
+                    response_format="verbose_json",
+                    timestamp_granularities=["segment"],
+                    temperature=0.0,
+                    language="ko"
+                )
 
-# ✅ 여러 개의 파일을 변환할 경우
-audio_files = ["downloads/sample.mp3"]  # 필요하면 파일 리스트 추가 가능
-for audio in audio_files:
-    transcribe_audio(audio)  # ✅ 모델을 다시 로드하지 않고 바로 변환!
+                # ✅ 자동 후처리 함수 적용
+                def refine_transcription(transcription):
+                    refined_segments = []
+                    for segment in transcription.segments:
+                        text = segment.text.strip().replace("\n", " ")
+                        text = text.replace("  ", " ")  # 중복 공백 제거
+                        refined_segments.append(f"[{segment.start:.2f}s - {segment.end:.2f}s] {text}")
+                    return "\n".join(refined_segments)
+
+                refined_text = refine_transcription(transcription)
+
+                # ✅ 세션 상태에 변환된 텍스트 저장
+                st.session_state.transcription_text = refined_text
+
+        except Exception as e:
+            st.error(f"❌ 오류 발생: {e}")
+
+# ✅ 변환된 텍스트 표시
+if st.session_state.transcription_text:
+    st.subheader("📜 변환된 텍스트 (자동 보정 적용)")
+    edited_text = st.text_area("✏️ 텍스트를 검토하고 수정하세요:", st.session_state.transcription_text, height=400)
+
+    # ✅ 세션 상태에 저장 버튼 상태 추가
+    if "save_clicked" not in st.session_state:
+        st.session_state.save_clicked = False
+
+    # ✅ 저장 버튼 클릭 상태 확인 후 저장
+    if st.button("💾 저장"):
+        st.session_state.save_clicked = True
+
+    if st.session_state.save_clicked:
+        save_path = "final_transcription.txt"
+        with open(save_path, "w", encoding="utf-8") as f:
+            f.write(edited_text)
+        st.success(f"✅ 수정된 텍스트가 저장되었습니다! (파일 위치: {os.path.abspath(save_path)})")
+
+
