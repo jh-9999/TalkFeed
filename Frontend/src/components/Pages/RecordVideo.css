@@ -49,7 +49,9 @@
     cursor: pointer;
     position: relative; /* ✅ 개별 이동 가능하도록 설정 */
     top: -15px;
+    text-decoration: none;
 }
+
 
 
 /* 녹화 화면 박스 */
