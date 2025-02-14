@@ -66,15 +66,22 @@ function RecordVideo() {
                 {stream ? (recording ? "녹화 중지" : "녹화 시작") : "카메라 켜기"}
             </button>
 
-            {/* 🔹 녹화 완료된 비디오 다운로드 */}
+            {/* 🔹 녹화 완료된 비디오 다운로드 버튼 (버튼 스타일 적용) */}
             {recordedChunks.length > 0 && (
-                <a
-                    href={URL.createObjectURL(new Blob(recordedChunks, { type: "video/webm" }))}
-                    download="recorded-video.webm"
-                    className="download-link"
+                <button 
+                    className="record-button" 
+                    onClick={() => {
+                        const url = URL.createObjectURL(new Blob(recordedChunks, { type: "video/webm" }));
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "recorded-video.webm";
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }}
                 >
                     녹화된 비디오 다운로드
-                </a>
+                </button>
             )}
 
             {/* 🔹 발표 영상 업로드 버튼 추가 (UploadVideo.jsx로 이동) */}
