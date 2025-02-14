@@ -28,7 +28,6 @@ const App = () => {
         <Route path="/uploadvideo" element={<UploadVideo />} />
         <Route path="/record" element={<RecordVideo />} />
       </Routes>
-      <Main />
       
     </div>
   );
