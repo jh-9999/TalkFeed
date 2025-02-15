@@ -10,18 +10,22 @@ function CreateScripts() {
         topic: "",
         purpose: "",
         summary: "",
-        duration: "5분" // 기본값 설정
+        time: "", // ⬅ 추가 (타이머 버튼 값 저장)
     });
 
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
     // 발표 시간 옵션을 3개로 제한
-    const durationOptions = ["3분", "5분", "10분"];
+    const timeOptions = ["3분", "5분", "10분"];
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setInput((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleTimeSelection = (selectedTime) => {
+        setInput((prev) => ({ ...prev, time: selectedTime }));
     };
 
     const handleSubmit = async () => {
@@ -36,7 +40,7 @@ function CreateScripts() {
         if (!input.summary.trim()) {
             missingFields.push("대략적인 전달 내용");
         }
-        if (!input.duration) {
+        if (!input.time) {
             missingFields.push("발표 시간");
         }
         
@@ -88,23 +92,24 @@ function CreateScripts() {
                 placeholder="대략적인 전달 내용을 입력하세요 (ex. 발표하고 싶은 내용)"
             />
             
-            <div className="duration-selector">
-                <label htmlFor="duration">발표 시간 선택:</label>
+            <div className="time-selector">
+                <label htmlFor="time">발표 시간 선택:</label>
                 <select
-                    id="duration"
-                    name="duration"
-                    value={input.duration}
+                    id="time"
+                    name="time" // ✅ 변수명 수정 (duration → time)
+                    value={input.time}
                     onChange={handleInputChange}
-                    className="duration-select"
+                    className="time-select"
                 >
-                    {durationOptions.map((duration) => (
-                        <option key={duration} value={duration}>
-                            {duration}
+                    <option value="">시간을 선택하세요</option> {/* ✅ 기본값 추가 */}
+                    {timeOptions.map((time) => (
+                        <option key={time} value={time}>
+                            {time}
                         </option>
                     ))}
                 </select>
             </div>
-            
+
             <button 
                 className="create-scripts-button"
                 onClick={handleSubmit}

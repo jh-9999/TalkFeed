@@ -48,21 +48,21 @@
 }
 
 /* 발표 시간 선택 컨테이너 */
-.duration-selector {
+.time-selector {
     width: 100%;
     max-width: 340px;
     margin-bottom: 1rem;
 }
 
 /* 발표 시간 라벨 */
-.duration-selector label {
+.time-selector label {
     display: block;
     font-size: 1rem;
     margin-bottom: 0.5rem;
 }
 
 /* 발표 시간 선택 드롭다운 */
-.duration-select {
+.time-select {
     width: 100%;
     max-width: 340px;
     height: 48px;
@@ -109,3 +109,5 @@
     margin-top: 0.5rem;
     font-size: 0.875rem;
 }
+
+
