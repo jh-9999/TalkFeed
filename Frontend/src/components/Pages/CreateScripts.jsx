@@ -10,10 +10,14 @@ function CreateScripts() {
         topic: "",
         purpose: "",
         summary: "",
+        duration: "5분" // 기본값 설정
     });
 
     const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(""); // 에러 메시지 상태 추가
+    const [errorMessage, setErrorMessage] = useState("");
+
+    // 발표 시간 옵션을 3개로 제한
+    const durationOptions = ["3분", "5분", "10분"];
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -32,6 +36,9 @@ function CreateScripts() {
         if (!input.summary.trim()) {
             missingFields.push("대략적인 전달 내용");
         }
+        if (!input.duration) {
+            missingFields.push("발표 시간");
+        }
         
         if (missingFields.length > 0) {
             const errorStr = missingFields.join(" 및 ") + "을(를) 입력하세요.";
@@ -39,7 +46,6 @@ function CreateScripts() {
             return;
         }
         
-        // 모든 필드가 채워진 경우 에러 메시지 초기화 후 진행
         setErrorMessage("");
         setLoading(true);
         try {
@@ -82,6 +88,23 @@ function CreateScripts() {
                 placeholder="대략적인 전달 내용을 입력하세요 (ex. 발표하고 싶은 내용)"
             />
             
+            <div className="duration-selector">
+                <label htmlFor="duration">발표 시간 선택:</label>
+                <select
+                    id="duration"
+                    name="duration"
+                    value={input.duration}
+                    onChange={handleInputChange}
+                    className="duration-select"
+                >
+                    {durationOptions.map((duration) => (
+                        <option key={duration} value={duration}>
+                            {duration}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            
             <button 
                 className="create-scripts-button"
                 onClick={handleSubmit}
@@ -90,10 +113,12 @@ function CreateScripts() {
                 {loading ? "생성 중..." : "스크립트 생성"}
             </button>
 
-            {/* 에러 메시지가 있을 경우 버튼 아래에 표시 */}
             {errorMessage && <div className="error-message">{errorMessage}</div>}
         </div>
     );
 }
 
 export default CreateScripts;
+
+
+ 

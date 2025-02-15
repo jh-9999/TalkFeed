@@ -47,6 +47,39 @@
     margin-bottom: 1rem;
 }
 
+/* 발표 시간 선택 컨테이너 */
+.duration-selector {
+    width: 100%;
+    max-width: 340px;
+    margin-bottom: 1rem;
+}
+
+/* 발표 시간 라벨 */
+.duration-selector label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* 발표 시간 선택 드롭다운 */
+.duration-select {
+    width: 100%;
+    max-width: 340px;
+    height: 48px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 0 1rem;
+    font-size: 1rem;
+    background-color: #f3f4f6;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5em;
+}
 
 /* 스크립트 생성 버튼 */
 .create-scripts-button {
@@ -67,4 +100,12 @@
     background-color: #a6d5e5;
 }
 
-
+/* 에러 메시지 */
+.error-message {
+    width: 100%;
+    max-width: 340px;
+    color: #ef4444;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
