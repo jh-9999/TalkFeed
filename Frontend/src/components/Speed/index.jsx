@@ -35,6 +35,27 @@ function Speed() {
     }
   };
 
+  // 결과 데이터를 바탕으로 종합 정보를 계산하는 함수
+  const calculateSummary = (segments) => {
+    let totalDuration = 0;
+    let totalVolume = 0;
+    let rateCounts = {};
+    segments.forEach(segment => {
+      totalDuration += segment.duration;
+      totalVolume += segment.volume;
+      rateCounts[segment.rate] = (rateCounts[segment.rate] || 0) + 1;
+    });
+    const totalSegments = segments.length;
+    return {
+      totalSegments,
+      averageDuration: totalSegments ? (totalDuration / totalSegments) : 0,
+      averageVolume: totalSegments ? (totalVolume / totalSegments) : 0,
+      rateCounts,
+    };
+  };
+
+  const summary = results ? calculateSummary(results) : null;
+
   const containerStyle = {
     maxWidth: "600px",
     margin: "20px auto",
@@ -57,6 +78,14 @@ function Speed() {
     marginTop: "10px",
     fontSize: "14px",
     color: "#555",
+  };
+
+  const segmentStyle = {
+    backgroundColor: "#f8f9fa",
+    padding: "10px",
+    margin: "10px 0",
+    borderRadius: "5px",
+    border: "1px solid #ddd",
   };
 
   return (
@@ -83,44 +112,49 @@ function Speed() {
           파일 선택
         </label>
         {file && <span style={fileNameStyle}>{file.name}</span>}
-        <button
-          style={buttonStyle}
-          onClick={handleUpload}
-          disabled={!file || uploading}
-        >
+        <button style={buttonStyle} onClick={handleUpload} disabled={!file || uploading}>
           {uploading ? "분석 중..." : "분석하기"}
         </button>
       </div>
 
       {results && (
-        <div style={{ marginTop: "20px", textAlign: "left" }}>
-          <h2>분석 결과</h2>
-          {results.map((segment) => (
-            <div
-              key={segment.segment}
-              style={{
-                backgroundColor: "#f8f9fa",
-                padding: "10px",
-                margin: "10px 0",
-                borderRadius: "5px",
-                border: "1px solid #ddd",
-              }}
-            >
-              <p>
-                <strong>구간:</strong> {segment.segment}
-              </p>
-              <p>
-                <strong>길이:</strong> {segment.duration.toFixed(2)}초
-              </p>
-              <p>
-                <strong>볼륨:</strong> {segment.volume.toFixed(2)}dB
-              </p>
-              <p>
-                <strong>속도:</strong> {segment.rate}
-              </p>
+        <>
+          <div style={{ marginTop: "20px", textAlign: "left" }}>
+            <h2>세부 구간 결과</h2>
+            {results.map((segment) => (
+              <div key={segment.segment} style={segmentStyle}>
+                <p>
+                  <strong>구간:</strong> {segment.segment}
+                </p>
+                <p>
+                  <strong>길이:</strong> {segment.duration.toFixed(2)}초
+                </p>
+                <p>
+                  <strong>볼륨:</strong> {segment.volume.toFixed(2)}dB
+                </p>
+                <p>
+                  <strong>속도:</strong> {segment.rate}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: "20px", textAlign: "left" }}>
+            <h2>종합 결과</h2>
+            <p><strong>전체 구간 수:</strong> {summary.totalSegments}</p>
+            <p>
+              <strong>평균 길이:</strong> {summary.averageDuration.toFixed(2)}초,{" "}
+              <strong>평균 볼륨:</strong> {summary.averageVolume.toFixed(2)}dB
+            </p>
+            <div>
+              <strong>속도 분류 빈도:</strong>
+              <ul>
+                {Object.entries(summary.rateCounts).map(([rate, count]) => (
+                  <li key={rate}>{rate}: {count}개</li>
+                ))}
+              </ul>
             </div>
-          ))}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
