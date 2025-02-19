@@ -6,10 +6,12 @@ function Speed() {
   const [results, setResults] = useState(null);
   const [uploading, setUploading] = useState(false);
 
+  // 파일 선택 핸들러
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
 
+  // 서버로 업로드하여 분석 요청
   const handleUpload = async () => {
     if (!file) {
       alert("파일을 선택하세요.");
@@ -35,16 +37,26 @@ function Speed() {
     }
   };
 
-  // 결과 데이터를 바탕으로 종합 정보를 계산하는 함수
+  // 초 -> 분:초 변환 함수
+  const formatTime = (seconds) => {
+    const totalSeconds = Math.floor(seconds); // 소수점 버림
+    const minutes = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${minutes}분 ${secs}초`;
+  };
+
+  // 결과 데이터를 바탕으로 종합 정보를 계산
   const calculateSummary = (segments) => {
     let totalDuration = 0;
     let totalVolume = 0;
     let rateCounts = {};
+
     segments.forEach(segment => {
       totalDuration += segment.duration;
       totalVolume += segment.volume;
       rateCounts[segment.rate] = (rateCounts[segment.rate] || 0) + 1;
     });
+
     const totalSegments = segments.length;
     return {
       totalSegments,
@@ -54,8 +66,10 @@ function Speed() {
     };
   };
 
+  // summary 객체 생성
   const summary = results ? calculateSummary(results) : null;
 
+  // 스타일 정의
   const containerStyle = {
     maxWidth: "600px",
     margin: "20px auto",
@@ -119,6 +133,7 @@ function Speed() {
 
       {results && (
         <>
+          {/* 세부 구간 결과 (변경 없음) */}
           <div style={{ marginTop: "20px", textAlign: "left" }}>
             <h2>세부 구간 결과</h2>
             {results.map((segment) => (
@@ -127,7 +142,8 @@ function Speed() {
                   <strong>구간:</strong> {segment.segment}
                 </p>
                 <p>
-                  <strong>길이:</strong> {segment.duration.toFixed(2)}초
+                  <strong>시간대:</strong>{" "}
+                  {formatTime(segment.start_time)} ~ {formatTime(segment.end_time)}
                 </p>
                 <p>
                   <strong>볼륨:</strong> {segment.volume.toFixed(2)}dB
@@ -138,6 +154,8 @@ function Speed() {
               </div>
             ))}
           </div>
+
+          {/* 종합 결과 (수정된 부분) */}
           <div style={{ marginTop: "20px", textAlign: "left" }}>
             <h2>종합 결과</h2>
             <p><strong>전체 구간 수:</strong> {summary.totalSegments}</p>
@@ -148,8 +166,14 @@ function Speed() {
             <div>
               <strong>속도 분류 빈도:</strong>
               <ul>
-                {Object.entries(summary.rateCounts).map(([rate, count]) => (
-                  <li key={rate}>{rate}: {count}개</li>
+                {/*
+                  원하는 순서를 명시적으로 지정:
+                  "매우 빠름" -> "빠름" -> "보통" -> "느림" -> "매우 느림"
+                */}
+                {["매우 빠름", "빠름", "보통", "느림", "매우 느림"].map(rate => (
+                  <li key={rate}>
+                    {rate}: {summary.rateCounts[rate] || 0}개
+                  </li>
                 ))}
               </ul>
             </div>
