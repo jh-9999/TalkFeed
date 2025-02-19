@@ -5,7 +5,7 @@ import "./RecordVideo.css";
 function RecordVideo() {
     const videoRef = useRef(null);
     const mediaRecorderRef = useRef(null);
-    const navigate = useNavigate(); // ✅ 페이지 이동을 위한 useNavigate 추가
+    const navigate = useNavigate();
     const location = useLocation();
     const [stream, setStream] = useState(null);
     const [recording, setRecording] = useState(false);
@@ -52,16 +52,37 @@ function RecordVideo() {
             setRecording(false);
         }
     };
+    const handleSaveRecording = () => {
+        if (recordedChunks.length > 0) {
+            const blob = new Blob(recordedChunks, { type: "video/webm" });
+            const videoURL = URL.createObjectURL(blob);
+    
+            // 🔹 녹화된 비디오를 localStorage에 저장 (선택 사항)
+            localStorage.setItem("recordedVideo", videoURL);
+    
+            // 🔹 다운로드 자동 실행
+            const a = document.createElement("a");
+            a.href = videoURL;
+            a.download = "recorded-video.webm"; // 🔹 파일 이름 설정
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+    
+            // 🔹 업로드 페이지로 이동
+            navigate("/uploadvideo");
+        }
+    };
 
     return (
-        <div className="record-container">
+        <div className="record-video-container">
 
-            {/* ✅ 네비게이션 */}
-            <div className="record-nav">
+            {/* 네비게이션 */}
+            <div className="scripts-nav">
                 <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>
                     Scripts
                 </span>
-                <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>
+                <span className={location.pathname.includes("video") || location.pathname.includes("record") ? "active-tab" : ""} 
+                    onClick={() => navigate("/uploadvideo")}>
                     Video
                 </span>
                 <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>
@@ -69,31 +90,21 @@ function RecordVideo() {
                 </span>
             </div>
 
-            {/* 🔹 실시간 녹화 화면 */}
+            {/* ✅ 녹화 화면 박스 (수정된 부분) */}
             <div className="record-box">
                 <video ref={videoRef} autoPlay playsInline className="video-preview" />
-            </div>
+                {!stream && <span className="camera-icon material-icons">photo_camera</span>}
+            </div>            
 
-            {/* 🔹 버튼 */}
-            <button className="record-button" onClick={stream ? (recording ? stopRecording : startRecording) : startWebcam}>
-                {stream ? (recording ? "녹화 중지" : "녹화 시작") : "카메라 켜기"}
+            {/* ✅ 녹화 시작 및 중지 버튼 */}
+            <button className={recording ? "recording-stop-button" : "recording-start-button"} 
+                    onClick={stream ? (recording ? stopRecording : startRecording) : startWebcam}>
+                {stream ? (recording ? "녹화 중단" : "녹화 시작") : "카메라 켜기"}
             </button>
 
-            {/* 🔹 녹화 완료된 비디오 다운로드 */}
-            {recordedChunks.length > 0 && (
-                <a
-                    href={URL.createObjectURL(new Blob(recordedChunks, { type: "video/webm" }))}
-                    download="recorded-video.webm"
-                    className="download-link"
-                >
-                    녹화된 비디오 다운로드
-                </a>
-            )}
-
-            {/* 🔹 발표 영상 업로드 버튼 추가 (UploadVideo.jsx로 이동) */}
-            <button className="upload-video-button" onClick={() => navigate("/upload")}>
-                <span className="material-icons" style={{ color: "white" }}>file_upload</span> 발표 영상 업로드
-                <span className="material-icons" style={{ color: "white" }}>arrow_forward</span>
+            {/* ✅ 완료 버튼 (녹화 저장 & 업로드 페이지 이동) */}
+            <button className="record-done-button" onClick={handleSaveRecording}>
+                완료
             </button>
         </div>
     );

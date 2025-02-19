@@ -83,6 +83,7 @@
 /* 스크립트 생성 버튼 */
 .scripts-create {
     width: 100%;
+    height: 6.5%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -149,8 +150,4 @@
     border: none;
     position: relative; /* ✅ 개별 이동 가능하도록 설정 */
     top: 1.5rem;
-}
-
-.modal-next-button:hover {
-    background-color: #002ea5;
 }

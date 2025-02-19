@@ -1,46 +1,30 @@
+
 /* 전체 컨테이너 */
-.record-container {
-    width: 375px;
-    height: 812px;
-    margin: 0 auto;
-    background-color: #ffffff;
+.record-video-container {
+    width: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem 1rem;
+    padding: 1rem;
+    background-color: #ffffff;
 }
 
-.record-back-button {
-    position: absolute;
-    top: 25px;
-    left: 49.5rem;
-    font-size: 1.5rem;
-    color: #555;
-    cursor: pointer;
-    user-select: none;
-}
-
-.record-back-button:hover {
-    color: black;
-}
-
-/* 헤더 타이틀 */
-.record-video-title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
-}
 
 /* 네비게이션 스타일 */
-.record-nav {
+.scripts-nav {
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    padding-right: 165px; /* 왼쪽 패딩 추가 */
     display: flex;
     justify-content: center;
     gap: 20px;
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 4rem;
+    position: relative; /* ✅ 개별 이동 가능하도록 설정 */
+    top: 20px;
 }
 
-.record-nav span {
+.scripts-nav span {
     color: gray;
     cursor: pointer;
     font-weight: normal;
@@ -49,14 +33,14 @@
 }
 
 /* 선택된 탭 스타일 */
-.record-nav .active-tab {
+.scripts-nav .active-tab {
     font-weight: bold;
-    color: black;
+    color: #003BD0;
     position: relative;
 }
 
 /* 선택된 탭 밑줄 */
-.record-nav .active-tab::after {
+.scripts-nav .active-tab::after {
     content: "";
     position: absolute;
     bottom: 0;
@@ -64,59 +48,26 @@
     transform: translateX(-50%);
     width: 100%;
     height: 2px;
-    background-color: black;
+    background-color: #003BD0;
     border-radius: 2px;
 }
 
-/* 실시간 녹화 화면 박스 */
+/*  녹화 화면 박스 */
 .record-box {
     width: 100%;
     max-width: 340px;
-    height: 440px;
-    background-color: #f3f4f6;
-    padding: 1rem;
-    border-radius: 12px;
-    border: none;
-    font-size: 1rem;
-    resize: none;
-    outline: none;
-    margin-bottom: 1rem;
-}
-
-/* 녹화 시작 버튼 */
-.record-button {
-    width: 100%;
-    max-width: 340px;
-    background-color: #ABC5F9;
-    color: rgb(255, 255, 255);
-    padding: 0.8rem;
-    border-radius: 9999px;
-    font-size: 1rem;
-    border: none;
-    text-align: center;
-    cursor: pointer;
-    position: relative; /* 개별 이동 가능하도록 설정 */
-    top: -15px;
-    font-weight: bold;
-
-}
-
-
-/* 녹화 화면 박스 */
-.record-box {
-    width: 100%;
-    max-width: 340px;
-    height: 263px;
-    background-color: #f3f4f6;
+    height: 300px;
+    background-color: #333;
     border-radius: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 1.5rem;
     position: relative;
+    overflow: hidden; 
 }
 
-/* 실시간 영상 */
+/*  실시간 영상 (record-box 내부에서 표시됨) */
 .video-preview {
     width: 100%;
     height: 100%;
@@ -124,35 +75,56 @@
     object-fit: cover;
 }
 
-
-/* 다운로드 링크 */
-.download-link {
-    margin-top: 10px;
-    font-size: 1rem;
-    color: #007aff;
-    text-decoration: none;
+/*  카메라 아이콘 (녹화 전 상태) */
+.camera-icon {
+    font-size: 2rem;
+    color: white;
+    position: absolute;
 }
 
-/* 발표 영상 업로드 버튼 */
-.upload-video-button {
+
+
+/* 녹화 시작 버튼 */
+.recording-start-button {
     width: 100%;
-    max-width: 340px;
-    background-color: #ABC5F9;
-    color: rgb(255, 255, 255);
-    padding: 1rem;
+    background-color: #555;
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem;
     border-radius: 9999px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     font-size: 1rem;
     border: none;
+    text-align: center;
     cursor: pointer;
-    position: relative; /* ✅ 개별 이동 가능하도록 설정 */
-    top: 20px;
-    font-weight: bold;
+    margin-bottom: 1rem;
 }
 
+/* 녹화 중단 버튼 */
+.recording-stop-button {
+    width: 100%;
+    background-color: #003BD0;
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
 
-.upload-video-button .material-icons {
-    margin: 0 5px;
+/* 완료 버튼 */
+.record-done-button {
+    width: 100%;
+    background-color: #003BD0;
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 12rem;
 }
