@@ -8,6 +8,16 @@ function App() {
   const [compareResult, setCompareResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // 정확도에 따른 메시지를 반환하는 함수
+  function getAccuracyMessage(accuracy) {
+    if (accuracy >= 95) return "매우 좋음";
+    else if (accuracy >= 90) return "좋음";
+    else if (accuracy >= 85) return "보통";
+    else if (accuracy >= 80) return "나쁨";
+    else if (accuracy >= 70) return "매우 나쁨";
+    else return "😥 더 공부가 필요해요!";
+  }
+
   const handleFileChange = (e) => setAudioFile(e.target.files[0]);
 
   const handleTranscribe = async () => {
@@ -81,6 +91,10 @@ function App() {
             <div className="result-stat accuracy">
               <h3>정확도</h3>
               <p className="stat-value">{compareResult.accuracy.toFixed(1)}%</p>
+              {/* 정확도 메시지 */}
+              <p className="accuracy-message" style={{ marginTop: '0.5rem', color: '#333' }}>
+                {getAccuracyMessage(compareResult.accuracy)}
+              </p>
             </div>
             <div className="result-stat difference">
               <h3>차이 발견</h3>

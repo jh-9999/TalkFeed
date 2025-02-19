@@ -39,7 +39,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# NamedBytesIO 클래스 정의: BytesIO 객체에 'name' 속성 추가
 class NamedBytesIO(io.BytesIO):
     def __init__(self, *args, name=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,35 +57,96 @@ def clean_text(text: str) -> str:
     text = re.sub(r"[^\w\s]", "", text)
     return text
 
-def create_original_diff_html(orig: str, trans: str) -> str:
+def highlight_diff_in_orig(orig_token: str, trans_token: str) -> str:
+    """
+    원본 토큰(orig_token)과 Whisper 토큰(trans_token)이 일부만 다를 때,
+    공통 접두사/접미사는 그대로 두고, 중간의 다른 부분만 <span class="diff-delete">로 감싸 반환.
+
+    예) 원본: "국영수", Whisper: "구경수"
+         - 공통 접미사: "수"
+         - 중간 차이: "국영" vs "구경"
+         => 원본 기준 "국영"만 밑줄 표시, "수"는 그대로
+    """
+    i = 0
+    min_len = min(len(orig_token), len(trans_token))
+    # 공통 접두사
+    while i < min_len and orig_token[i] == trans_token[i]:
+        i += 1
+
+    j = 0
+    # 공통 접미사
+    while j < (min_len - i) and orig_token[-1 - j] == trans_token[-1 - j]:
+        j += 1
+
+    prefix = orig_token[:i]               # 공통 접두사
+    diff_mid = orig_token[i:len(orig_token) - j]  # 중간에 다른 부분
+    suffix = orig_token[len(orig_token) - j:]      # 공통 접미사
+
+    if diff_mid:  # 중간 부분만 빨간색
+        diff_mid = f'<span class="diff-delete">{diff_mid}</span>'
+
+    return prefix + diff_mid + suffix
+
+def create_diff_html_and_count(orig: str, trans: str) -> (str, int):
     """
     원본 텍스트(orig)와 Whisper 텍스트(trans)를 토큰 단위로 비교하여,
-    최종적으로 원본 텍스트를 그대로 출력하되, Whisper와 다른 부분(원본에만 있거나 대체된 부분)은
-    <span class="diff-delete">로 강조하여 표시합니다.
-    
-    - equal: 원본 토큰 그대로 출력
-    - replace, delete: 원본 토큰을 빨간색으로 강조
-    - insert: Whisper에만 있는 토큰은 무시
+    1) 원본 토큰 전체를 순서대로 출력
+    2) 'delete' -> 원본에만 있는 토큰: 전체 빨간 밑줄
+    3) 'replace' -> 일부만 다른 경우 부분만 빨간 밑줄
+    4) 'insert' -> Whisper에만 있는 토큰은 무시
+    5) 'equal'  -> 그대로 출력
+
+    반환: (diff_html, diff_count)
+      - diff_html: 실제 HTML
+      - diff_count: 빨간색(밑줄) 처리된 '토큰' 수
+        (단, 부분만 다른 경우에도 토큰 1개로 계산)
     """
     orig_tokens = orig.split()
     trans_tokens = trans.split()
+
     matcher = difflib.SequenceMatcher(None, orig_tokens, trans_tokens)
-    parts = []
+    diff_parts = []
+    diff_count = 0
+
     for tag, i1, i2, j1, j2 in matcher.get_opcodes():
         if tag == "equal":
-            parts.extend(orig_tokens[i1:i2])
-        elif tag in ("replace", "delete"):
-            # 원본에 존재하는 토큰을 강조하여 출력
-            for token in orig_tokens[i1:i2]:
-                parts.append(f'<span class="diff-delete">{token}</span>')
+            # 원본 토큰 그대로 출력
+            diff_parts.extend(orig_tokens[i1:i2])
+        elif tag == "delete":
+            # 원본에만 있는 토큰 전체 밑줄
+            tokens_del = orig_tokens[i1:i2]
+            diff_count += len(tokens_del)  # 삭제된 토큰 개수
+            for token in tokens_del:
+                diff_parts.append(f'<span class="diff-delete">{token}</span>')
+        elif tag == "replace":
+            # 원본 토큰 개수 == Whisper 토큰 개수일 때만 부분 하이라이트
+            orig_chunk = orig_tokens[i1:i2]
+            trans_chunk = trans_tokens[j1:j2]
+            if (i2 - i1) == (j2 - j1):
+                # 1:1 대응 → 부분만 다른 경우 highlight
+                for o_token, t_token in zip(orig_chunk, trans_chunk):
+                    if o_token == t_token:
+                        diff_parts.append(o_token)
+                    else:
+                        diff_count += 1  # 이 토큰이 교체되었다고 판단
+                        # 부분만 다른 부분만 빨간색
+                        diff_parts.append(highlight_diff_in_orig(o_token, t_token))
+            else:
+                # 토큰 개수가 안 맞으면 전체 밑줄
+                diff_count += len(orig_chunk)
+                for o_token in orig_chunk:
+                    diff_parts.append(f'<span class="diff-delete">{o_token}</span>')
         elif tag == "insert":
-            # Whisper에만 있는 토큰은 출력하지 않음
-            continue
-    return ' '.join(parts)
+            # Whisper에만 있는 토큰은 무시
+            pass
+
+    return ' '.join(diff_parts), diff_count
 
 class CompareRequest(BaseModel):
     original_script: str
     transcription_text: str
+
+app = FastAPI()
 
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
@@ -97,14 +157,11 @@ async def transcribe_audio(file: UploadFile = File(...)):
     if file.content_type not in ["audio/mpeg", "audio/mp3"]:
         raise HTTPException(status_code=400, detail="지원되지 않는 파일 형식입니다. MP3 파일을 업로드해주세요.")
     try:
-        # 파일 내용을 BytesIO 객체로 읽음
         audio_bytes = await file.read()
         logging.info(f"Received file '{file.filename}' of size: {len(audio_bytes)} bytes")
-        
-        # NamedBytesIO를 사용하여 파일명 설정
+
         audio_file = NamedBytesIO(audio_bytes, name=file.filename)
-        
-        # openai.Audio.transcribe 함수 호출 (최신 인터페이스)
+
         transcript = openai.Audio.transcribe(
             model="whisper-1",
             file=audio_file,
@@ -113,8 +170,7 @@ async def transcribe_audio(file: UploadFile = File(...)):
             language="ko"
         )
         logging.info("Whisper API call succeeded.")
-        
-        # transcript["segments"]에서 텍스트 추출
+
         segments = transcript.get("segments", [])
         refined_text = " ".join([seg["text"].strip() for seg in segments])
         cleaned_text = clean_text(refined_text)
@@ -127,23 +183,25 @@ async def transcribe_audio(file: UploadFile = File(...)):
 @app.post("/compare")
 def compare_texts(request: CompareRequest):
     """
-    원본 스크립트와 Whisper 변환 텍스트를 받아 전처리 후,
-    단어 단위 차이 개수, 정확도, 그리고 원본 텍스트를 기반으로 한 diff HTML 결과를 반환.
-    결과 HTML은 사용자가 입력한 원본 텍스트만 출력하며,
-    Whisper와 달라진 부분은 빨간색으로 강조됩니다.
+    원본 스크립트와 Whisper 변환 텍스트를 받아,
+    - 원본을 전체 출력
+    - 틀린 부분만 부분 하이라이트(밑줄)
+    - 토큰 단위로 차이 개수를 세서 accuracy 계산
     """
     orig_text = clean_text(request.original_script)
     trans_text = clean_text(request.transcription_text)
-    
+
+    # 부분 차이도 밑줄 처리 & diff_count 계산
+    diff_html, diff_count = create_diff_html_and_count(orig_text, trans_text)
+
+    # 정확도 계산 (원본 토큰 수 기준)
     orig_tokens = orig_text.split()
-    trans_tokens = trans_text.split()
-    ndiff = list(difflib.ndiff(orig_tokens, trans_tokens))
-    diff_count = sum(1 for d in ndiff if d.startswith('+ ') or d.startswith('- '))
-    total_words = max(len(orig_tokens), len(trans_tokens))
-    accuracy = ((total_words - diff_count) / total_words) * 100 if total_words > 0 else 100
-    
-    diff_html = create_original_diff_html(orig_text, trans_text)
-    
+    total_words = len(orig_tokens)
+    if total_words > 0:
+        accuracy = ((total_words - diff_count) / total_words) * 100
+    else:
+        accuracy = 100.0
+
     return {
         "accuracy": accuracy,
         "diff_count": diff_count,
