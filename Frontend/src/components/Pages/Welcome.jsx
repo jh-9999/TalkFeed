@@ -7,26 +7,20 @@ function Welcome() {
 
     return (
         <div className="welcome-container">
-            <div className="welcome-card">
-
-                {/* 뒤로 가기 버튼 */}
-                <span className="back-button material-icons" onClick={() => navigate("/")}>
-                    arrow_back
-                </span>
-
-                {/* 환영 메시지 */}
-                <div className="welcome-text">
-                    <p>발표 피드백 AI 플랫폼.</p>
-                    <p>톡피드에 오신 것을 환영합니다. 👏</p>
-                </div>
-
-                {/* 시작하기 버튼 */}
-                <button className="start-button" onClick={() => navigate("/home")}> 
-                    톡피드 시작하기 →
-                </button>
-
-
+            {/* 체크 아이콘 이미지 */}
+            <div className="welcome-icon">
+                <img src="/images/check.png" alt="Check Icon" className="check-image" />
             </div>
+
+            {/* 환영 문구 */}
+            <h1 className="welcome-text">
+                발표 피드백 AI 플랫폼 <br /> 톡피드에 오신 것을 환영합니다
+            </h1>
+
+            {/* 시작하기 버튼 */}
+            <button className="welcome-button" onClick={() => navigate("/scripts")}>
+                시작하기
+            </button>
         </div>
     );
 }

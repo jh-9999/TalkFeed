@@ -2,54 +2,51 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LogIn.css";
 
-function LogIn() {
-    const [showPassword, setShowPassword] = useState(false);
+function Login() {
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
 
     return (
         <div className="login-container">
-            <div className="login-card">
+            {/* 뒤로가기 버튼 */}
+            <span className="back-button material-icons" onClick={() => navigate(-1)}>arrow_back</span>
 
-                {/* 뒤로 가기 버튼 */}
-                <span className="back-button material-icons" onClick={() => navigate("/")}>
-                    arrow_back
-                </span>
+            {/* 제목 */}
+            <h1 className="login-title">회원가입</h1>
 
-                <h2 className="login-title">로그인</h2>
-
-                <div className="input-group">
-                    <label htmlFor="email">이메일</label>
-                    <input type="email" id="email" placeholder="이메일을 입력해주세요." />
-                </div>
-
-                <div className="input-group password-group">
-                    <label htmlFor="password">비밀번호</label>
-                    <div className="password-container">
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            placeholder="비밀번호를 입력해주세요."
-                        />
-                        <span
-                            className="eye-icon material-icons"
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? "visibility_off" : "visibility"}
-                        </span>
-                    </div>
-                </div>
-
-                <button className="login-button" onClick={() => navigate("/welcome")}>
-                    로그인
-                </button>
-
-                <div className="login-links">
-                    <a href="#" className="forgot-password">비밀번호를 잃어버리셨나요?</a>
-                    <p>계정이 없으신가요? <span className="signup-link" onClick={() => navigate("/signup")}>회원가입</span></p>
-                </div>
+            {/* 입력 폼 */}
+            <div className="input-group">
+                <label>E-mail</label>
+                <input type="email" placeholder="Enter your email" />
             </div>
+
+            <div className="input-group password-group">
+                <label>Password</label>
+                <div className="password-wrapper">
+                    <input type={showPassword ? "text" : "password"} placeholder="Enter your password" />
+                    <span className="toggle-password material-icons" onClick={() => setShowPassword(!showPassword)}>
+                        {showPassword ? "visibility" : "visibility_off"}
+                    </span>
+                </div>
+                <span className="forgot-password">비밀번호 찾기</span>
+            </div>
+
+            {/* 로그인 버튼 */}
+            <button className="login-button" onClick={() => navigate("/welcome")}>로그인</button>
+
+            {/* 구글 로그인 */}
+            <p className="divider">다른 계정으로 로그인</p>
+            <button className="google-login">
+                <img src="/images/google_icon.png" alt="Google" className="google-icon" />
+                Google 계정으로 로그인
+            </button>
+
+            {/* 계정이 없을 때 회원가입 버튼 */}
+            <p className="signup-text">
+                계정이 없으신가요? <span className="signup-link" onClick={() => navigate("/signup")}>회원가입</span>
+            </p>
         </div>
     );
 }
 
-export default LogIn;
+export default Login;

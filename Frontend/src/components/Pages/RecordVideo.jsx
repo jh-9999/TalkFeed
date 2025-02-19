@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./RecordVideo.css";
 
 function RecordVideo() {
     const videoRef = useRef(null);
     const mediaRecorderRef = useRef(null);
     const navigate = useNavigate(); // ✅ 페이지 이동을 위한 useNavigate 추가
+    const location = useLocation();
     const [stream, setStream] = useState(null);
     const [recording, setRecording] = useState(false);
     const [recordedChunks, setRecordedChunks] = useState([]);
@@ -54,7 +55,19 @@ function RecordVideo() {
 
     return (
         <div className="record-container">
-            <h1 className="record-title">Video</h1>
+
+            {/* ✅ 네비게이션 */}
+            <div className="record-nav">
+                <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>
+                    Scripts
+                </span>
+                <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>
+                    Video
+                </span>
+                <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>
+                    Feedback
+                </span>
+            </div>
 
             {/* 🔹 실시간 녹화 화면 */}
             <div className="record-box">
@@ -79,8 +92,8 @@ function RecordVideo() {
 
             {/* 🔹 발표 영상 업로드 버튼 추가 (UploadVideo.jsx로 이동) */}
             <button className="upload-video-button" onClick={() => navigate("/upload")}>
-                <span className="material-icons">file_upload</span> 발표 영상 업로드
-                <span className="material-icons">arrow_forward</span>
+                <span className="material-icons" style={{ color: "white" }}>file_upload</span> 발표 영상 업로드
+                <span className="material-icons" style={{ color: "white" }}>arrow_forward</span>
             </button>
         </div>
     );

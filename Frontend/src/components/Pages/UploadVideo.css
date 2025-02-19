@@ -11,19 +11,71 @@
 }
 
 
-/* 제목 스타일 */
-.video-title {
+.video-back-button {
+    position: absolute;
+    top: 25px;
+    left: 49.5rem;
+    font-size: 1.5rem;
+    color: #555;
+    cursor: pointer;
+    user-select: none;
+}
+
+.video-back-button:hover { 
+    color: black;
+}
+
+/* 헤더 타이틀 */
+.video-video-title {
     font-size: 1.8rem;
     font-weight: bold;
     margin-bottom: 1.5rem;
-    align-self: flex-start;
 }
+
+/* 네비게이션 스타일 */
+.video-nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.video-nav span {
+    color: gray;
+    cursor: pointer;
+    font-weight: normal;
+    position: relative;
+    padding-bottom: 5px;
+}
+
+/* 선택된 탭 스타일 */
+.video-nav .active-tab {
+    font-weight: bold;
+    color: black;
+    position: relative;
+}
+
+/* 선택된 탭 밑줄 */
+.video-nav .active-tab::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 2px;
+    background-color: black;
+    border-radius: 2px;
+}
+
+
 
 /* 완료 버튼 */
 .video-complete-button {
     width: 100%;
     max-width: 340px;
-    background-color: #f8b6a0;
+    background-color: #ABC5F9;
     color: black;
     padding: 0.8rem;
     border-radius: 9999px;
@@ -46,7 +98,7 @@
     border-top: 1px solid #ddd;
     cursor: pointer;
     position: relative; /* ✅ 개별 이동 가능하도록 설정 */
-    top: 131px;
+    top: 70px;
 }
 
 /* 비디오 녹화 아이콘 */
@@ -123,7 +175,7 @@
 .upload-done-button {
     width: 100%;
     max-width: 340px;
-    background-color: #f4a8a1;
+    background-color: #ABC5F9;
     color: black;
     padding: 0.8rem;
     border-radius: 9999px;
