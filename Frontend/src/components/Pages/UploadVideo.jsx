@@ -1,23 +1,36 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./UploadVideo.css";
 
 function UploadVideo() {
     const navigate = useNavigate();
-    const [videoPreview, setVideoPreview] = useState(null); // 🔹 영상 미리보기 상태
+    const location = useLocation();
+    const [videoPreview, setVideoPreview] = useState(null);
 
-    // 🔹 파일 선택 시 실행되는 함수
+    // 파일 선택 시 실행되는 함수
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
             const videoURL = URL.createObjectURL(file);
-            setVideoPreview(videoURL); // 🔹 미리보기 URL 설정
+            setVideoPreview(videoURL);
         }
     };
 
     return (
-        <div className="upload-video-container">
-            <h1 className="upload-video-title">Video</h1>
+        <div className="video-container">
+
+            {/* ✅ 네비게이션 */}
+            <div className="video-nav">
+                <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>
+                    Scripts
+                </span>
+                <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>
+                    Video
+                </span>
+                <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>
+                    Feedback
+                </span>
+            </div>
 
             {/* 🔹 영상 업로드 박스 */}
             <label className="upload-box">

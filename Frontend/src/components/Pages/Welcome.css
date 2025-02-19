@@ -1,71 +1,56 @@
-/* Welcome.css */
+/* 전체 컨테이너 */
 .welcome-container {
-    width: 375px;
-    height: 812px;
-    margin: 0 auto;
-    background-color: #f5f5f5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.welcome-card {
-    position: absolute;
-    width: 100%;
-    max-width: 375px;
-    min-height: 815px;
-    background: white;
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 0rem;
+    height: 100vh;
+    background-color: #F9FAFB;
+    text-align: center;
 }
 
-.back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 1.5rem;
-    color: #cccaca;
-    cursor: pointer;
-    user-select: none;
+/* 체크 아이콘 이미지 */
+.welcome-icon {
+    width: 45px;
+    height: 45px;
+    margin-bottom: 20px;
 }
 
-.back-button:hover {
-    color: #888888;
-}
-
-.welcome-text {
-    text-align: left;
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin-bottom: -6rem;
+.check-image {
     width: 100%;
-    max-width: 300px;
+    height: 100%;
+    object-fit: contain;
 }
 
-.start-button {
+/* 환영 문구 */
+.welcome-text {
+    font-size: 19px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 40px;
+    line-height: 1.5;
+}
+
+/* 시작하기 버튼 */
+.welcome-button {
     width: 100%;
     max-width: 320px;
-    background-color: #bfdbfe;
-    color: #374151;
-    padding: 1rem;
-    border-radius: 9999px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: #003BD0;
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem;
+    border-radius: 50px;
     font-size: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
     cursor: pointer;
     border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative; /* ✅ 개별 이동 가능하도록 설정 */
-    top: -60px;
+    bottom: -8rem;
 }
 
-.start-button:hover {
-    background-color: #93c5fd;
+
+
+.welcome-button:hover {
+    background-color: #002ea5;
 }
