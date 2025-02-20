@@ -91,7 +91,6 @@ function App() {
             <div className="result-stat accuracy">
               <h3>정확도</h3>
               <p className="stat-value">{compareResult.accuracy.toFixed(1)}%</p>
-              {/* 정확도 메시지 */}
               <p className="accuracy-message" style={{ marginTop: '0.5rem', color: '#333' }}>
                 {getAccuracyMessage(compareResult.accuracy)}
               </p>

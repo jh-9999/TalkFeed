@@ -24,13 +24,14 @@ if not api_key:
     raise Exception("OpenAI API 키가 설정되지 않았습니다. .env 파일을 확인해주세요.")
 openai.api_key = api_key
 
+# FastAPI 인스턴스
 app = FastAPI(
     title="Whisper 텍스트 변환 시스템 API",
     description="Whisper API를 사용하여 음성을 텍스트로 변환하고, 텍스트 비교 기능을 제공하는 API입니다.",
     version="1.0.0",
 )
 
-# CORS 설정 (모든 출처 허용)
+# CORS 설정
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -46,26 +47,28 @@ class NamedBytesIO(io.BytesIO):
 
 def clean_text(text: str) -> str:
     """
-    타임스탬프, 줄바꿈, 다중 공백, 그리고 특수기호(느낌표, 물음표 등)를 제거하여 클린 텍스트로 반환.
-    예: "[00.00s - 06.40s] 자, 얘들아!" → "자 얘들아"
+    1) 타임스탬프 제거
+    2) 여러 공백 정리
+    (문장부호는 제거하지 않음)
     """
-    # 타임스탬프 제거
+    # 예) "[00.00s - 06.40s]" 형태 제거
     text = re.sub(r"\[\d+\.\d+s\s*-\s*\d+\.\d+s\]\s*", "", text)
-    # 줄바꿈 및 다중 공백 정리
-    text = " ".join(text.replace("\n", " ").split())
-    # 특수기호 제거 (알파벳, 숫자, 밑줄, 공백을 제외한 모든 문자)
-    text = re.sub(r"[^\w\s]", "", text)
+    # 여러 줄바꿈, 다중 공백을 하나의 공백으로 정리
+    text = " ".join(text.split())
     return text
+
+def tokenize_with_punctuation(text: str):
+    """
+    단어(\w+)와 문장부호([^\w\s])를 분리하여 토큰 리스트로 반환.
+    예: "안녕, 세계!" -> ["안녕", ",", "세계", "!"]
+    """
+    tokens = re.findall(r"\w+|[^\w\s]", text)
+    return tokens
 
 def highlight_diff_in_orig(orig_token: str, trans_token: str) -> str:
     """
     원본 토큰(orig_token)과 Whisper 토큰(trans_token)이 일부만 다를 때,
     공통 접두사/접미사는 그대로 두고, 중간의 다른 부분만 <span class="diff-delete">로 감싸 반환.
-
-    예) 원본: "국영수", Whisper: "구경수"
-         - 공통 접미사: "수"
-         - 중간 차이: "국영" vs "구경"
-         => 원본 기준 "국영"만 밑줄 표시, "수"는 그대로
     """
     i = 0
     min_len = min(len(orig_token), len(trans_token))
@@ -78,9 +81,9 @@ def highlight_diff_in_orig(orig_token: str, trans_token: str) -> str:
     while j < (min_len - i) and orig_token[-1 - j] == trans_token[-1 - j]:
         j += 1
 
-    prefix = orig_token[:i]               # 공통 접두사
-    diff_mid = orig_token[i:len(orig_token) - j]  # 중간에 다른 부분
-    suffix = orig_token[len(orig_token) - j:]      # 공통 접미사
+    prefix = orig_token[:i]
+    diff_mid = orig_token[i:len(orig_token) - j]
+    suffix = orig_token[len(orig_token) - j:]
 
     if diff_mid:  # 중간 부분만 빨간색
         diff_mid = f'<span class="diff-delete">{diff_mid}</span>'
@@ -89,20 +92,16 @@ def highlight_diff_in_orig(orig_token: str, trans_token: str) -> str:
 
 def create_diff_html_and_count(orig: str, trans: str) -> (str, int):
     """
-    원본 텍스트(orig)와 Whisper 텍스트(trans)를 토큰 단위로 비교하여,
-    1) 원본 토큰 전체를 순서대로 출력
-    2) 'delete' -> 원본에만 있는 토큰: 전체 빨간 밑줄
-    3) 'replace' -> 일부만 다른 경우 부분만 빨간 밑줄
-    4) 'insert' -> Whisper에만 있는 토큰은 무시
-    5) 'equal'  -> 그대로 출력
-
+    원본 텍스트(orig)와 Whisper 텍스트(trans)를 '문장부호까지 포함'하여 토큰화 후,
+    difflib.SequenceMatcher를 사용해 비교.
+    
     반환: (diff_html, diff_count)
-      - diff_html: 실제 HTML
+      - diff_html: HTML 형태로 틀린 부분 표시
       - diff_count: 빨간색(밑줄) 처리된 '토큰' 수
-        (단, 부분만 다른 경우에도 토큰 1개로 계산)
     """
-    orig_tokens = orig.split()
-    trans_tokens = trans.split()
+    # 문장부호를 포함해 토큰화
+    orig_tokens = tokenize_with_punctuation(orig)
+    trans_tokens = tokenize_with_punctuation(trans)
 
     matcher = difflib.SequenceMatcher(None, orig_tokens, trans_tokens)
     diff_parts = []
@@ -119,20 +118,20 @@ def create_diff_html_and_count(orig: str, trans: str) -> (str, int):
             for token in tokens_del:
                 diff_parts.append(f'<span class="diff-delete">{token}</span>')
         elif tag == "replace":
-            # 원본 토큰 개수 == Whisper 토큰 개수일 때만 부분 하이라이트
+            # 원본 토큰 vs Whisper 토큰이 서로 다른 경우
             orig_chunk = orig_tokens[i1:i2]
             trans_chunk = trans_tokens[j1:j2]
+
+            # 교체 구간의 토큰 수가 같다면 부분 하이라이트 시도
             if (i2 - i1) == (j2 - j1):
-                # 1:1 대응 → 부분만 다른 경우 highlight
                 for o_token, t_token in zip(orig_chunk, trans_chunk):
                     if o_token == t_token:
                         diff_parts.append(o_token)
                     else:
-                        diff_count += 1  # 이 토큰이 교체되었다고 판단
-                        # 부분만 다른 부분만 빨간색
+                        diff_count += 1
                         diff_parts.append(highlight_diff_in_orig(o_token, t_token))
             else:
-                # 토큰 개수가 안 맞으면 전체 밑줄
+                # 토큰 개수가 다르면 통째로 밑줄 처리
                 diff_count += len(orig_chunk)
                 for o_token in orig_chunk:
                     diff_parts.append(f'<span class="diff-delete">{o_token}</span>')
@@ -146,22 +145,20 @@ class CompareRequest(BaseModel):
     original_script: str
     transcription_text: str
 
-app = FastAPI()
-
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
     """
     MP3 파일 업로드를 받아 Whisper API로 음성을 텍스트로 변환.
-    변환 후 타임스탬프, 줄바꿈, 다중 공백, 특수기호를 제거한 클린 텍스트를 반환.
+    변환 후 타임스탬프, 줄바꿈, 다중 공백만 제거한 텍스트를 반환.
     """
     if file.content_type not in ["audio/mpeg", "audio/mp3"]:
         raise HTTPException(status_code=400, detail="지원되지 않는 파일 형식입니다. MP3 파일을 업로드해주세요.")
     try:
         audio_bytes = await file.read()
         logging.info(f"Received file '{file.filename}' of size: {len(audio_bytes)} bytes")
-
         audio_file = NamedBytesIO(audio_bytes, name=file.filename)
 
+        # Whisper API 호출
         transcript = openai.Audio.transcribe(
             model="whisper-1",
             file=audio_file,
@@ -171,8 +168,11 @@ async def transcribe_audio(file: UploadFile = File(...)):
         )
         logging.info("Whisper API call succeeded.")
 
+        # 여러 segment의 text를 합쳐서 하나의 문자열로
         segments = transcript.get("segments", [])
         refined_text = " ".join([seg["text"].strip() for seg in segments])
+        
+        # 최소 전처리(타임스탬프 제거, 공백 정리)
         cleaned_text = clean_text(refined_text)
         return {"transcription_text": cleaned_text}
     except Exception as e:
@@ -184,18 +184,18 @@ async def transcribe_audio(file: UploadFile = File(...)):
 def compare_texts(request: CompareRequest):
     """
     원본 스크립트와 Whisper 변환 텍스트를 받아,
-    - 원본을 전체 출력
-    - 틀린 부분만 부분 하이라이트(밑줄)
+    - 틀린 부분만 하이라이트(밑줄)
     - 토큰 단위로 차이 개수를 세서 accuracy 계산
     """
+    # 최소 전처리
     orig_text = clean_text(request.original_script)
     trans_text = clean_text(request.transcription_text)
 
-    # 부분 차이도 밑줄 처리 & diff_count 계산
+    # 비교 후 diff_html, diff_count 계산
     diff_html, diff_count = create_diff_html_and_count(orig_text, trans_text)
 
     # 정확도 계산 (원본 토큰 수 기준)
-    orig_tokens = orig_text.split()
+    orig_tokens = tokenize_with_punctuation(orig_text)
     total_words = len(orig_tokens)
     if total_words > 0:
         accuracy = ((total_words - diff_count) / total_words) * 100
