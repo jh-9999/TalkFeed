@@ -10,6 +10,11 @@ import CreateScripts from "./components/Pages/CreateScripts";
 import CreateScriptsOutput from "./components/Pages/CreateScriptsOutput";
 import UploadVideo from "./components/Pages/UploadVideo";
 import RecordVideo from "./components/Pages/RecordVideo";
+import AnalysisScreen from "./components/Pages/AnalysisScreen";
+import Feedback from "./components/Pages/Feedback";
+import FeedbackEmotion from "./components/Pages/FeedbackEmotion";
+import FeedbackSpeed from "./components/Pages/FeedbackSpeed";
+import FeedbackWhisper from "./components/Pages/FeedbackWhisper";
 import { BrowserRouter as Router, Routes, Route  } from 'react-router-dom';
 
 const App = () => {
@@ -28,6 +33,11 @@ const App = () => {
         <Route path="/uploadvideo" element={<UploadVideo />} />
         <Route path="/video" element={<UploadVideo />} />
         <Route path="/record" element={<RecordVideo />} />
+        <Route path="/analysisscreen" element={<AnalysisScreen />} />
+        <Route path="/feedback" element={<Feedback />} />
+        <Route path="/feedback-emotion" element={<FeedbackEmotion />} />
+        <Route path="/feedback-speed" element={<FeedbackSpeed />} />
+        <Route path="/feedback-whisper" element={<FeedbackWhisper />} />
       </Routes>
       <Main />
       

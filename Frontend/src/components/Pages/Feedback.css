@@ -1,0 +1,169 @@
+/* ✅ 전체 컨테이너 (Feedback 페이지 전체 레이아웃 설정) */
+.feedback-container {
+    width: 100%; /* 전체 화면 너비 */
+    height: 100vh; /* 전체 화면 높이 (뷰포트 기준) */
+    display: flex;
+    flex-direction: column; /* 요소들을 세로 정렬 */
+    align-items: center; /* 가운데 정렬 */
+    padding: 1rem; /* 내부 여백 */
+    background-color: #ffffff; /* 배경색: 흰색 */
+}
+
+/* ✅ 네비게이션 바 스타일 (탭 메뉴) */
+.scripts-nav {
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    padding-right: 165px; /* 오른쪽 여백 추가 */
+    display: flex; /* 가로 정렬 */
+    justify-content: center; /* 중앙 정렬 */
+    gap: 20px; /* 각 탭 사이 간격 */
+    font-size: 1rem; /* 폰트 크기 */
+    margin-bottom: 4rem; /* 아래쪽 여백 */
+    position: relative; /* 위치 조정 가능하도록 설정 */
+    top: 20px; /* 위에서 20px 내려오도록 설정 */
+}
+
+/* ✅ 네비게이션 바의 개별 탭 스타일 */
+.scripts-nav span {
+    color: gray; /* 기본 글자 색상 */
+    cursor: pointer; /* 마우스 오버 시 클릭 가능하도록 설정 */
+    font-weight: normal; /* 기본 글씨 굵기 */
+    position: relative; /* 위치 조정 가능하도록 설정 */
+    padding-bottom: 5px; /* 글자 아래 여백 */
+}
+
+/* ✅ 선택된 탭 스타일 (현재 활성화된 탭) */
+.scripts-nav .active-tab {
+    font-weight: bold; /* 글자 굵게 */
+    color: #003BD0; /* 글자 색상: 파란색 */
+    position: relative; /* 위치 조정 가능하도록 설정 */
+}
+
+/* ✅ 선택된 탭 밑줄 스타일 */
+.scripts-nav .active-tab::after {
+    content: ""; /* 가상 요소 생성 */
+    position: absolute; /* 위치 절대값 설정 */
+    bottom: 0; /* 아래쪽 정렬 */
+    left: 50%; /* 중앙 정렬 */
+    transform: translateX(-50%); /* 가로 방향 중앙 정렬 */
+    width: 100%; /* 밑줄 길이 */
+    height: 2px; /* 밑줄 두께 */
+    background-color: #003BD0; /* 밑줄 색상: 파란색 */
+    border-radius: 2px; /* 끝부분 둥글게 */
+}
+
+/* ✅ 분석 결과 타이틀 스타일 */
+.result-title {
+    position: relative; /* 위치 조정 가능하도록 설정 */
+    font-size: 18px; /* 글자 크기 */
+    font-weight: bold; /* 글자 굵게 */
+    margin-bottom: 10px; /* 아래 여백 추가 */
+    align-self: flex-start; /* 왼쪽 정렬 */
+    padding-left: 10px; /* 왼쪽 여백 추가 */
+}
+
+/* ✅ 도넛 차트와 점수 리스트를 감싸는 컨테이너 */
+.chart-container {
+    display: flex; /* 가로 정렬 */
+    align-items: center; /* 가운데 정렬 */
+    justify-content: space-between; /* 양쪽 끝 정렬 */
+    width: 90%; /* 전체 너비의 90% 사용 */
+    margin-top: 20px; /* 위쪽 여백 */
+}
+
+/* ✅ 도넛 차트 크기 및 위치 */
+.doughnut-chart {
+    width: 101px; /* 도넛 차트 너비 */
+    height: 101px; /* 도넛 차트 높이 */
+    display: flex; /* 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    justify-content: center; /* 수평 가운데 정렬 */
+    margin-left: 20px; /* 왼쪽 여백 */
+}
+/* ✅ "표정", "속도", "발음"만 굵게 설정 */
+.score-label {
+    font-weight: bold;
+}
+
+/* ✅ 점수(75점, 90점, 85점)는 기본 폰트로 유지 */
+.score {
+    font-weight: normal;
+}
+/* ✅ 점수 리스트 정렬 */
+/* ✅ 점수 리스트 정렬 (왼쪽으로 10px 이동) */
+.score-list {
+    display: flex; /* 세로 정렬 */
+    flex-direction: column; /* 세로 정렬 */
+    gap: 10px; /* 항목 간 간격 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+    transform: translateX(-44px); /* ✅ 왼쪽으로 10px 이동 */
+}
+
+
+/* ✅ 개별 점수 항목 스타일 */
+.score-item {
+    display: flex; /* 가로 정렬 */
+    align-items: center; /* 가운데 정렬 */
+    font-size: 16px; /* 글자 크기 */
+}
+
+/* ✅ 점수 앞 색상 점 스타일 */
+.dot {
+    width: 13px; /* 점 크기 */
+    height: 13px; /* 점 크기 */
+    border-radius: 30%; /* 동그랗게 만들기 */
+    margin-right: 8px; /* 오른쪽 여백 */
+}
+
+/* ✅ 점수 색상 (파랑, 초록, 노랑) */
+.blue { background: #4880EE; }
+.green { background: #57BD79; }
+.orange { background: #F5C55B; }
+
+/* ✅ 분석 상세 결과 위에 F5F5F5 색상의 박스 */
+.feedback-divider {
+    width: 390px; /* ✅ 너비 390px */
+    height: 4px; /* ✅ 높이 4px */
+    background-color: #F5F5F5; /* ✅ 배경색 */
+    position: relative; /* 위치 조정 가능하도록 설정 */
+    top: 28px; /* ✅ 기존보다 2px 아래로 이동 */
+    margin-bottom: 10px; /* ✅ 아래 여백 추가 */
+}
+
+/* ✅ 분석 상세 결과 리스트 (화면 넘지 않도록 조정) */
+.feedback-list {
+    max-width: 340px; /* ✅ 화면 크기에 맞춰 조정 */
+    width: 100%; /* 전체 너비 100% */
+    position: relative; /* ✅ 위치 조정 가능하도록 설정 */
+    top: 40px; /* ✅ 리스트 위치 조정 */
+    padding: 0; /* 내부 여백 제거 */
+}
+
+/* ✅ 리스트 아이템(버튼) 스타일 */
+.feedback-item {
+    display: flex; /* 가로 정렬 */
+    align-items: center; /* 가운데 정렬 */
+    padding: 10px 15px; /* 내부 여백 */
+    font-size: 16px; /* 글자 크기 */
+    height: 60px; /* 버튼 높이 */
+    cursor: pointer; /* 클릭 가능 */
+    width: 100%; /* 전체 너비 */
+    font-weight: bold; /* ✅ 굵기 조정 */
+}
+
+/* ✅ 아이콘(왼쪽) */
+.icon {
+    font-size: 20px; /* 아이콘 크기 */
+    margin-right: 8px; /* 오른쪽 여백 */
+}
+
+/* ✅ 화살표 아이콘 (오른쪽으로 이동) */
+.arrow {
+    font-size: 20px; /* ✅ 아이콘 크기 */
+    margin-left: auto; /* ✅ 왼쪽 여백을 자동으로 설정하여 오른쪽 끝으로 이동 */
+    font-weight: bold; /* ✅ 굵기 조정 */
+}
+
+/* ✅ 리스트 아이템 호버 효과 */
+.feedback-item:hover {
+    background: #f5f5f5; /* 마우스 오버 시 배경색 변경 */
+}

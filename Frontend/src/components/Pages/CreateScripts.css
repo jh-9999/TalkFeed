@@ -99,3 +99,31 @@
     color: white;
 }
 
+/* 발표 시간 선택 버튼 컨테이너 */
+.time-select-container {
+    display: flex;
+    justify-content: center; /* 가로 정렬 */
+    gap: 10px; /* 버튼 간 간격 */
+    margin-bottom: 10px;
+}
+
+/* 개별 시간 선택 버튼 */
+.time-button {
+    width: 60px;
+    padding: 8px 0;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f3f3f3;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* 선택된 버튼 스타일 */
+.time-button.selected {
+    background-color: #003BD0;
+    color: white;
+    border-color: #003BD0;
+}
+

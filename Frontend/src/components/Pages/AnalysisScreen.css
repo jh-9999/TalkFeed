@@ -1,0 +1,82 @@
+/* 전체 컨테이너 (예: iPhone 14 기준: 393×852) */
+.analysis-container {
+    position: relative;
+    width: 393px;
+    height: 852px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #0034B5 0%, #386FFF 100%);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    color: #ffffff;
+  }
+  
+  /* 분석 카드: 내용 영역 중앙 정렬 (분석 카드는 position: relative를 유지하여 
+     내부에 절대 위치 요소가 AnalysisContainer 기준이 아니라 카드 내부 기준이 되지 않도록) */
+  .analysis-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* 카드 내부의 다른 요소들이 자유롭게 배치되도록 별도 position 없이 사용 */
+  }
+  
+  /* 분석 제목: iPhone 컨테이너 기준 절대 위치 (x:39, y:153) */
+  .analysis-title {
+    position: absolute;
+    left: 39px;
+    top: 153px;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+  }
+  .analysis-title1 {
+    position: absolute;
+    left: 39px;
+    top: 183px;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+  }
+  .analysis-text1 {
+    position: absolute;
+    left: 39px;
+    top: 253px;
+    font-size: 20px;
+    margin: 0;
+  }
+  
+  /* 분석 텍스트 영역: 나머지 텍스트는 기본 흐름에 따라 왼쪽 정렬 */
+  .analysis-text {
+    text-align: left;
+    padding: 1rem;
+    /* 필요에 따라 margin-top을 조정하여 분석 제목과 겹치지 않게 함 */
+    margin-top: 200px;
+  }
+  
+  .analysis-gif {
+    position: absolute;
+    left: 134px; /* X 좌표 */
+    top: 380px; /* Y 좌표 */
+    width: 112px; /* GIF 크기 조정 (필요하면 변경 가능) */
+    height: auto;
+}
+  /* 진행 상태 텍스트 */
+  .analysis-status {
+    position: absolute;
+    left: 95px;
+    top: 552px;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 0.5rem;
+  }
+  
+  /* 진행률 텍스트 */
+  .analysis-progress {
+    position: absolute;
+    left: 148px;
+    top: 588px;
+    font-size: 16px;
+    margin-top: 0.25rem;
+  } 

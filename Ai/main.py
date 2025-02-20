@@ -33,6 +33,7 @@ def get_max_tokens(duration: str) -> int:
     return int(duration_minutes * words_per_minute * token_multiplier)
 
 def create_presentation_prompt(data: PresentationRequest) -> tuple:
+    token_multiplier = 1.3  # 내부 계산에 사용할 multiplier
     max_tokens = get_max_tokens(data.duration)
     
     # 섹션별 비율 설정 (도입부 20%, 본론 60%, 결론 20%)
@@ -47,24 +48,25 @@ def create_presentation_prompt(data: PresentationRequest) -> tuple:
         f"1. 주제: {data.topic}\n"
         f"2. 발표 목적: {data.purpose}\n"
         f"3. 핵심 전달 내용: {data.summary}\n"
+        # 여기서 선택한 발표 시간이 프롬프트에 반영됩니다.
         f"4. 발표 시간: {data.duration}\n\n"
         "스크립트 구조 요구사항:\n"
         "1. 도입부 (전체의 20%):\n"
         "   - 청중의 관심을 끌 수 있는 강력한 시작 (통계, 질문, 일화 등)\n"
         "   - 발표 주제와 목적의 명확한 제시\n"
         "   - 발표 순서 안내\n"
-        f"   - 길이: 약 {int(section_tokens['intro']/token_multiplier)}단어\n\n"
+        f"   - 길이: 약 {int(section_tokens['intro'] / token_multiplier)}단어\n\n"
         "2. 본론 (전체의 60%):\n"
         "   - 주요 논점을 2-3개로 명확히 구분\n"
         "   - 각 논점마다 구체적인 예시나 데이터 포함\n"
         "   - 논리적 흐름을 위한 적절한 전환어 사용\n"
         "   - 적절한 비유와 시각적 묘사 포함\n"
-        f"   - 길이: 약 {int(section_tokens['main']/token_multiplier)}단어\n\n"
+        f"   - 길이: 약 {int(section_tokens['main'] / token_multiplier)}단어\n\n"
         "3. 결론 (전체의 20%):\n"
         "   - 핵심 메시지 요약\n"
         "   - 청중에게 남기고 싶은 인상적인 마무리\n"
         "   - 실천 가능한 행동 제안이나 다음 단계 제시\n"
-        f"   - 길이: 약 {int(section_tokens['conclusion']/token_multiplier)}단어\n\n"
+        f"   - 길이: 약 {int(section_tokens['conclusion'] / token_multiplier)}단어\n\n"
         "발표 스타일 요구사항:\n"
         "1. 어조:\n"
         "   - 전문적이면서도 친근한 어조 사용\n"
