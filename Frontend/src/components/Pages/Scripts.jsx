@@ -5,11 +5,22 @@ import "./Scripts.css";
 function Scripts() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [showModal, setShowModal] = useState(false); // ✅ 모달 상태 추가
+    const [showModal, setShowModal] = useState(false);
+    const [scriptText, setScriptText] = useState("");
+    const [error, setError] = useState("");
+
+    const handleComplete = () => {
+        if (!scriptText.trim()) {
+            setError("스크립트를 입력하세요.");
+        } else {
+            setError("");
+            navigate("/video");
+        }
+    };
 
     return (
         <div className={`scripts-container ${showModal ? "modal-active" : ""}`}>
-            {/* ✅ 네비게이션 바 */}
+            {/* 네비게이션 바 */}
             <header className="scripts-header">
                 <div className="scripts-nav">
                     <span className={location.pathname === "/scripts" ? "active-tab" : ""} onClick={() => navigate("/scripts")}>
@@ -22,26 +33,32 @@ function Scripts() {
                         Feedback
                     </span>
                 </div>
-
-
             </header>
 
-            {/* ✅ 스크립트 입력 박스 */}
-            <textarea className="scripts-textarea" placeholder="스크립트 입력"></textarea>
+            {/* 스크립트 입력 박스 */}
+            <textarea
+                className="scripts-textarea"
+                placeholder="스크립트 입력"
+                value={scriptText}
+                onChange={(e) => setScriptText(e.target.value)}
+            ></textarea>
 
-            {/* ✅ 완료 버튼 */}
-            <button className="scripts-button" onClick={() => navigate("/video")}>
+            {/* 에러 메시지 표시 */}
+            {error && <p className="error-message" style={{ color: "red" }}>{error}</p>}
+
+            {/* 완료 버튼 */}
+            <button className="scripts-button" onClick={handleComplete}>
                 완료
             </button>
 
-            {/* ✅ 스크립트 생성 버튼 (모달 열기) */}
+            {/* 스크립트 생성 버튼 (모달 열기) */}
             <div className="scripts-create" onClick={() => setShowModal(true)}>
                 <span className="material-icons">add_circle_outline</span>
                 <span className="scripts-create-text">스크립트 생성</span>
                 <span className="material-icons">arrow_forward</span>
             </div>
 
-            {/* ✅ 모달 창 */}
+            {/* 모달 창 */}
             {showModal && (
                 <div className="modal-overlay" onClick={() => setShowModal(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
