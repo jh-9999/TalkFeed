@@ -1,22 +1,40 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import "./UploadVideo.css";
 
 function UploadVideo() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [uploadedFiles, setUploadedFiles] = useState([]); // ✅ 업로드된 파일 리스트 상태 추가
+    const [uploadedFiles, setUploadedFiles] = useState([]);
 
-    // 🔹 파일 선택 시 실행되는 함수
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
-        setUploadedFiles(files); // ✅ 파일 개수 업데이트
+        setUploadedFiles(files);
+    };
+
+    const handleUpload = async () => {
+        if (uploadedFiles.length === 0) {
+            alert("업로드할 파일을 선택하세요.");
+            return;
+        }
+        const formData = new FormData();
+        uploadedFiles.forEach((file) => {
+            formData.append("file", file);
+        });
+        try {
+            const response = await axios.post("http://localhost:5000/upload/", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            console.log("업로드 성공:", response.data);
+            navigate("/uploadvideo");
+        } catch (error) {
+            console.error("업로드 실패:", error);
+        }
     };
 
     return (
         <div className="video-container">
-            
-            {/* ✅ 네비게이션 */}
             <div className="scripts-nav">
                 <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>
                     Scripts
@@ -29,7 +47,6 @@ function UploadVideo() {
                 </span>
             </div>
 
-            {/* 🔹 영상 업로드 박스 */}
             <label className="upload-box">
                 <div className="upload-placeholder">
                     <img src="/images/upload_icon.png" alt="업로드 아이콘" className="upload-icon" />
@@ -38,10 +55,8 @@ function UploadVideo() {
                 <input type="file" accept="video/*" multiple onChange={handleFileChange} hidden />
             </label>
 
-            {/* 🔹 완료 버튼 */}
-            <button className="upload-done-button">완료</button>
+            <button className="upload-done-button" onClick={handleUpload}>완료</button>
 
-            {/* ✅ 비디오 녹화 버튼 */}
             <div className="video-record-section" onClick={() => navigate("/record")}>
                 <div className="record-icon">
                     <span className="material-icons">fiber_manual_record</span>

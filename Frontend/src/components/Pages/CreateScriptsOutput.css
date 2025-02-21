@@ -99,3 +99,18 @@
     font-weight: bold;
 }
 
+/* 스크립트 저장 버튼 */
+.scripts-save-button {
+    width: 100%;
+    max-width: 340px;
+    background-color: #ABC5F9; /* ✅ 버튼 배경색 */
+    color: white; /* ✅ 글자 색상 */
+    padding: 0.75rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
