@@ -1,12 +1,31 @@
 import os
 import logging
+import boto3
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from concurrent.futures import ThreadPoolExecutor
-from typing import List
-import numpy as np
-import cv2
-from deepface import DeepFace
+from typing import List, Dict
+from collections import Counter, OrderedDict
+from dotenv import load_dotenv
+
+# 환경 변수 로드
+load_dotenv()
+
+# AWS 설정
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+
+# AWS Rekognition 클라이언트 설정
+rekognition_client = boto3.client(
+    "rekognition",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    region_name=AWS_REGION
+)
+
+# AWS Rekognition에서 제공하는 감정 목록 (순서 지정)
+AWS_EMOTIONS = ["HAPPY", "SAD", "ANGRY", "CONFUSED", "DISGUSTED", "SURPRISED", "CALM", "FEAR"]
 
 # 로깅 설정
 logging.basicConfig(
@@ -29,73 +48,42 @@ app.add_middleware(
 
 def analyze_single_image(image_bytes: bytes) -> dict:
     """
-    주어진 이미지 바이트 데이터를 DeepFace를 사용해 감정 분석을 수행합니다.
-    얼굴이 검출되지 않거나, 신뢰도가 85% 미만이면 "results"에 null을 반환합니다.
+    AWS Rekognition을 사용해 이미지의 감정을 분석합니다.
+    신뢰도 90% 이상인 감정만 반환합니다.
     """
     try:
         logger.debug("Starting analysis of one image")
-        # 이미지 디코딩 (바이트 -> numpy 배열)
-        nparr = np.frombuffer(image_bytes, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        if img is None or img.size == 0:
-            logger.error("Image decoding failed")
-            return {"error": "이미지 디코딩 실패"}
 
-        logger.debug("Image decoded successfully")
-        # 전처리: GaussianBlur 적용 (노이즈 감소)
-        processed_img = cv2.GaussianBlur(img, (3, 3), 0)
-        logger.debug("GaussianBlur applied")
+        # AWS Rekognition API 호출
+        response = rekognition_client.detect_faces(
+            Image={"Bytes": image_bytes},
+            Attributes=["ALL"]
+        )
 
-        # 얼굴 검출
-        face_detector = "retinaface"
-        faces = DeepFace.extract_faces(processed_img, detector_backend=face_detector, enforce_detection=False)
-        if not faces:
+        if not response["FaceDetails"]:
             logger.warning("No face detected in the image")
             return {"results": None}
-        logger.debug(f"Detected {len(faces)} face(s) in the image")
 
-        # 얼굴 감정 분석 수행
-        analysis = DeepFace.analyze(
-            processed_img,
-            actions=['emotion'],
-            enforce_detection=False,
-            detector_backend=face_detector
-        )
-        logger.debug(f"Raw analysis result: {analysis}")
+        results = []
+        for face in response["FaceDetails"]:
+            if "Emotions" in face:
+                # 신뢰도 90% 이상 감정만 필터링
+                high_confidence_emotions = [
+                    {"emotion": e["Type"], "confidence": e["Confidence"]}
+                    for e in face["Emotions"] if e["Confidence"] >= 90 and e["Type"] in AWS_EMOTIONS
+                ]
 
-        # 신뢰도 기준 (85%)
-        THRESHOLD = 85.0
+                if high_confidence_emotions:
+                    # 가장 높은 감정 찾기
+                    dominant_emotion = max(high_confidence_emotions, key=lambda x: x["confidence"])
+                    results.append(dominant_emotion)
 
-        # 다중 얼굴 분석
-        if isinstance(analysis, list):
-            results = []
-            for face_analysis in analysis:
-                dominant_emotion = face_analysis["dominant_emotion"]
-                confidence = float(face_analysis["emotion"][dominant_emotion])
-                if confidence < THRESHOLD:
-                    logger.info(f"Face confidence {confidence:.2f}% < {THRESHOLD}%; skipping face.")
-                    continue
-                results.append({
-                    "emotion": dominant_emotion,
-                    "confidence": confidence
-                })
-            if not results:
-                logger.warning("No face meets the confidence threshold.")
-                return {"results": None}
-            return {"results": results}
+        if not results:
+            logger.warning("No emotions detected with confidence >= 90%")
+            return {"results": None}
 
-        # 단일 얼굴 분석
-        else:
-            dominant_emotion = analysis["dominant_emotion"]
-            confidence = float(analysis["emotion"][dominant_emotion])
-            if confidence < THRESHOLD:
-                logger.info(f"Face confidence {confidence:.2f}% < {THRESHOLD}%; returning null.")
-                return {"results": None}
-            logger.info(f"Face analysis (single face): {dominant_emotion} (confidence: {confidence:.2f}%)")
-            return {"results": [{
-                "emotion": dominant_emotion,
-                "confidence": confidence
-            }]}
+        logger.info(f"Analysis complete: {results}")
+        return {"results": results}
 
     except Exception as e:
         logger.exception("Error during image analysis")
@@ -104,13 +92,16 @@ def analyze_single_image(image_bytes: bytes) -> dict:
 @app.post("/analyze-images")
 async def analyze_images(files: List[UploadFile] = File(...)):
     """
-    여러 이미지 파일을 받아 각 이미지에 대해 얼굴 감정 분석을 병렬 처리합니다.
-    동시 처리는 최대 4개 스레드로 제한.
+    여러 이미지 파일을 받아 AWS Rekognition으로 감정 분석을 병렬 처리합니다.
+    분석된 감정의 전체 개수를 추가로 반환합니다.
     """
     results = {}
     images_data = []  # (파일명, 이미지 바이트) 튜플 리스트
+    emotion_counter = OrderedDict({emotion: 0 for emotion in AWS_EMOTIONS})
+    total_images = len(files)
+    no_face_count = 0
 
-    logger.info(f"Received {len(files)} file(s) for analysis")
+    logger.info(f"Received {total_images} file(s) for analysis")
     for file in files:
         data = await file.read()
         images_data.append((file.filename, data))
@@ -118,25 +109,50 @@ async def analyze_images(files: List[UploadFile] = File(...)):
 
     # 동시 처리 스레드 수: max_workers=4
     with ThreadPoolExecutor(max_workers=4) as executor:
-        future_to_filename = {}
-        for filename, data in images_data:
-            future = executor.submit(analyze_single_image, data)
-            future_to_filename[future] = filename
-            logger.debug(f"Submitted file {filename} for parallel processing")
+        future_to_filename = {
+            executor.submit(analyze_single_image, data): filename
+            for filename, data in images_data
+        }
 
         for future in future_to_filename:
             filename = future_to_filename[future]
             try:
                 result = future.result()
                 results[filename] = result
+                
+                if result["results"]:
+                    for emotion_data in result["results"]:
+                        emotion_counter[emotion_data["emotion"]] += 1
+                else:
+                    no_face_count += 1
+                
                 logger.info(f"Analysis complete for file: {filename}")
             except Exception as e:
                 logger.exception(f"Error processing file {filename}")
                 results[filename] = {"error": str(e)}
 
-    logger.info("All images processed")
-    return {"results": results}
+    logger.info(f"Total images processed: {total_images}")
+    logger.info(f"No face detected count: {no_face_count}")
+    logger.info(f"Emotion count summary: {dict(emotion_counter)}")
+    
+    return {
+        "total_images": total_images,
+        "results": results,
+        "emotion_counts": dict(emotion_counter),
+        "no_face_count": no_face_count,
+        "available_emotions": AWS_EMOTIONS
+    }
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("emotion:app", host="0.0.0.0", port=8000, reload=True)
+
+'''AWS Rekognition 감정 종류:
+HAPPY (행복)
+SAD (슬픔)
+ANGRY (화남)
+CONFUSED (혼란)
+DISGUSTED (혐오)
+SURPRISED (놀람)
+CALM (평온)
+FEAR (두려움) '''
