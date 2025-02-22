@@ -1,29 +1,35 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import "./FeedbackSpeed.css";
 import feedbackIcon from "./feedbackicon.png";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-function FeedbackEmotion() {
+// 초를 분과 초로 변환하는 헬퍼 함수
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  if (mins > 0) {
+    return `${mins}분 ${secs.toFixed(2)}초`;
+  } else {
+    return `${secs.toFixed(2)}초`;
+  }
+}
+
+function FeedbackSpeed() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [analysisResults, setAnalysisResults] = useState(null);
+  const [analysisResults, setAnalysisResults] = useState([]);
   const [loadingResults, setLoadingResults] = useState(false);
 
   // 도넛 차트 데이터 (예시)
   const data = {
     datasets: [
       {
-        data: [90, 10],
+        data: [85, 15],
         backgroundColor: ["#57BD79", "#E0E0E0"],
         borderWidth: 0,
       },
@@ -39,18 +45,18 @@ function FeedbackEmotion() {
     plugins: {
       tooltip: false,
       legend: false,
-    }
+    },
   };
 
-  // 팝업 열기: 백엔드에서 분석 결과 JSON을 가져옴
+  // "자세히 보기" 버튼 클릭 시 GET 요청으로 백엔드에서 속도 분석 결과를 가져옴
   const openPopup = async () => {
     setIsPopupOpen(true);
     setLoadingResults(true);
     try {
-      // URL 수정: /speed/analysis-results로 변경
       const res = await fetch("http://localhost:8000/speed/analysis-results?" + new Date().getTime());
       const data = await res.json();
-      setAnalysisResults(data.results);
+      // 백엔드에서 { results: [...] } 형식으로 반환한다고 가정
+      setAnalysisResults(data.results || []);
     } catch (error) {
       console.error("분석 결과를 가져오는 중 오류 발생:", error);
       setAnalysisResults([]);
@@ -58,7 +64,7 @@ function FeedbackEmotion() {
       setLoadingResults(false);
     }
   };
-  
+
   const closePopup = () => {
     setIsPopupOpen(false);
   };
@@ -87,25 +93,18 @@ function FeedbackEmotion() {
         </span>
       </div>
 
-      {/* 네비게이션 밑 회색 줄 */}
-      <div className="nav-underline"></div>
-
-      {/* 분석 결과 타이틀 및 "자세히 보기" 버튼 */}
       <h2 className="emotion-title">속도 분석 결과</h2>
       <span className="see-all" onClick={openPopup}>자세히 보기</span>
 
-      {/* 도넛 차트 */}
       <div className="chart-container">
         <div className="emotion-chart-wrapper">
           <Doughnut data={data} options={options} width={101} height={101} />
-          <div className="emotion-chart-text">90점</div>
+          <div className="emotion-chart-text">85점</div>
         </div>
       </div>
 
-      {/* 분석 상세 결과 리스트 위 회색 박스 */}
       <div className="feedback-divider"></div>
 
-      {/* 분석 상세 결과 리스트 */}
       <div className="feedback-list">
         <div className="feedback-item" onClick={() => navigate("/feedback")}>
           <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" />&nbsp;전체 분석 결과
@@ -121,22 +120,24 @@ function FeedbackEmotion() {
         </div>
       </div>
 
-      {/* 팝업 모달 */}
       {isPopupOpen && (
         <div className="modal-overlay" onClick={closePopup}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>상세 분석 결과</h3>
             {loadingResults ? (
               <p>분석 결과 로딩 중...</p>
-            ) : analysisResults && analysisResults.length > 0 ? (
+            ) : analysisResults.length > 0 ? (
               <div className="results-list">
                 {analysisResults.map((seg, idx) => (
-                  <div key={idx} className="result-item">
+                  <div key={idx} className="segment-box">
                     <p>
-                      세그먼트: {seg.segment} | 시작: {seg.start_time.toFixed(2)}s | 종료: {seg.end_time.toFixed(2)}s
+                      시작 : {formatTime(seg.start_time)} | 종료 : {formatTime(seg.end_time)}
                     </p>
                     <p>
-                      길이: {seg.duration.toFixed(2)}s | 볼륨: {seg.volume.toFixed(2)}dB | 속도: {seg.rate}
+                      길이 : {formatTime(seg.duration)} | 볼륨 : {seg.volume.toFixed(2)}dB
+                    </p>
+                    <p>
+                      속도 : {seg.rate}
                     </p>
                   </div>
                 ))}
@@ -144,9 +145,7 @@ function FeedbackEmotion() {
             ) : (
               <p>분석 결과가 없습니다.</p>
             )}
-            <button className="modal-close-button" onClick={closePopup}>
-              닫기
-            </button>
+            <button className="modal-close-button" onClick={closePopup}>닫기</button>
           </div>
         </div>
       )}
@@ -154,4 +153,4 @@ function FeedbackEmotion() {
   );
 }
 
-export default FeedbackEmotion;
+export default FeedbackSpeed;

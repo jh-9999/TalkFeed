@@ -120,3 +120,22 @@
     margin-right: 8px; /* ✅ 텍스트와 간격 조정 */
     vertical-align: middle; /* ✅ 수직 정렬 */
 }
+
+.whisper-diff-html .diff-delete {
+    color: red;
+    font-weight: bold;
+    background-color: #ffe6e6; /* 연한 빨간 배경 */
+    border: 1px solid red;     /* 빨간 테두리 */
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+  .result-box {
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #000000;
+  }
+  

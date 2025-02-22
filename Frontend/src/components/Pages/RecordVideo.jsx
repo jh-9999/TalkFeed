@@ -11,7 +11,7 @@ function RecordVideo() {
   const [recording, setRecording] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
 
-  // 웹캠을 활성화하고 video element에 스트림을 할당
+  // 웹캠 활성화 및 video element에 스트림 할당
   const startWebcam = async () => {
     try {
       const newStream = await navigator.mediaDevices.getUserMedia({
@@ -28,13 +28,13 @@ function RecordVideo() {
     }
   };
 
-  // 녹화 시작: MediaRecorder를 생성하고, 데이터 청크를 수집
+  // 녹화 시작: MediaRecorder를 생성하고 데이터 청크를 수집
   const startRecording = () => {
     if (!stream) {
       alert("먼저 카메라를 켜주세요.");
       return;
     }
-    let options = { mimeType: "video/webm;codecs=vp8,opus" }; // 브라우저에 따라 지원하는 옵션 확인
+    const options = { mimeType: "video/webm;codecs=vp8,opus" };
     let recorder;
     try {
       recorder = new MediaRecorder(stream, options);
@@ -78,8 +78,10 @@ function RecordVideo() {
     const blob = new Blob(recordedChunks, { type: "video/webm" });
     const formData = new FormData();
     formData.append("file", blob, "recorded-video.webm");
+    // 녹화의 경우 원본 스크립트가 없으므로 빈 문자열 전송
+    formData.append("original_script", "");
     try {
-      const response = await fetch("http://localhost:8000/upload/", {
+      const response = await fetch("http://localhost:8000/vod/upload/", {
         method: "POST",
         body: formData,
       });

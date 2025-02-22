@@ -10,29 +10,8 @@ function CreateScripts() {
   const [purpose, setPurpose] = useState("");
   const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleGenerateScript = async () => {
-    // 입력되지 않은 항목만 배열에 담습니다.
-    const missingFields = [];
-    if (!topic.trim()) {
-      missingFields.push("주제");
-    }
-    if (!purpose.trim()) {
-      missingFields.push("목적");
-    }
-    if (!summary.trim()) {
-      missingFields.push("전달 내용");
-    }
-    
-    // 누락된 항목이 있으면 에러 메시지 출력 후 함수 종료
-    if (missingFields.length > 0) {
-      setError(`다음 항목을 입력하세요: ${missingFields.join(", ")}`);
-      return;
-    } else {
-      setError("");
-    }
-
     setLoading(true);
     try {
       const response = await fetch("http://localhost:5000/ai/predict", {
@@ -49,7 +28,8 @@ function CreateScripts() {
       });
       const data = await response.json();
       // 생성된 스크립트는 data.script에 있다고 가정합니다.
-      navigate("/create-scripts-output", { state: { script: data.script } });
+      // UploadVideo 페이지로 생성된 스크립트를 전달합니다.
+      navigate("/uploadvideo", { state: { original_script: data.script } });
     } catch (error) {
       console.error("API 호출 오류:", error);
       // 에러 처리 추가 가능
@@ -101,9 +81,6 @@ function CreateScripts() {
         value={summary}
         onChange={(e) => setSummary(e.target.value)}
       />
-
-      {/* 에러 메시지 표시 */}
-      {error && <p style={{ color: "red", marginBottom: "1rem" }}>{error}</p>}
 
       {/* 발표 시간 선택 버튼 */}
       <div className="time-select-container">

@@ -4,7 +4,7 @@ import subprocess
 import cv2
 import logging
 import requests  # 반드시 설치되어 있어야 합니다.
-from fastapi import FastAPI, HTTPException, File, UploadFile, BackgroundTasks
+from fastapi import FastAPI, HTTPException, File, UploadFile, BackgroundTasks, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
@@ -102,14 +102,29 @@ def get_audio(filename: str):
 def read_root():
     return {"message": "vod.py is running"}
 
-# 백그라운드 작업: speed.py의 /upload-audio 엔드포인트로 오디오 파일 전송
+# 백그라운드 작업: Whisper 분석 트리거
+def trigger_whisper_analysis(audio_path: str, original_script: str):
+    whisper_url = "http://localhost:8000/whisper/analysis-results"
+    logger.info("Sending audio file and original script to whisper analysis endpoint (background)...")
+    with open(audio_path, "rb") as audio_file:
+        files = {"file": (os.path.basename(audio_path), audio_file, "audio/mpeg")}
+        data = {"original_script": original_script}
+        try:
+            response = requests.post(whisper_url, files=files, data=data, timeout=60)
+            if response.status_code != 200:
+                logger.error(f"Whisper analysis failed: {response.text}")
+            else:
+                logger.info(f"Whisper analysis triggered successfully: {response.json()}")
+        except Exception as e:
+            logger.error(f"Error triggering whisper analysis in background: {e}")
+
+# 기존 speed 분석 트리거 (유지)
 def trigger_speed_analysis(audio_path: str):
     speed_url = "http://localhost:8000/speed/upload-audio"
     logger.info("Sending audio file to speed analysis endpoint (background)...")
     with open(audio_path, "rb") as audio_file:
         files = {"audio": (os.path.basename(audio_path), audio_file, "audio/mpeg")}
         try:
-            # 타임아웃을 60초로 설정
             speed_response = requests.post(speed_url, files=files, timeout=60)
             if speed_response.status_code != 200:
                 logger.error(f"Speed analysis failed: {speed_response.text}")
@@ -118,8 +133,13 @@ def trigger_speed_analysis(audio_path: str):
         except Exception as e:
             logger.error(f"Error triggering speed analysis in background: {e}")
 
+# 수정된 /upload/ 엔드포인트: 원본 스크립트도 Form 필드로 받음
 @app.post("/upload/")
-async def upload_video(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
+async def upload_video(
+    file: UploadFile = File(...),
+    original_script: str = Form(...),  # 필수 입력: 사용자가 미리 입력한 스크립트
+    background_tasks: BackgroundTasks = None
+):
     try:
         clear_previous_files()
         
@@ -159,11 +179,20 @@ async def upload_video(file: UploadFile = File(...), background_tasks: Backgroun
         
         extract_images(video_path, EXTRACTED_FRAMES_DIR, interval_seconds=5)
         
-        # 백그라운드 작업으로 speed.py 분석 요청 트리거
+        # 백그라운드 작업: 속도 분석 트리거 (기존)
         if background_tasks is not None:
             background_tasks.add_task(trigger_speed_analysis, audio_path)
         else:
             trigger_speed_analysis(audio_path)
+        
+        # 백그라운드 작업: Whisper 분석 트리거 (원본 스크립트와 함께)
+        if original_script.strip():  # 스크립트가 비어있지 않으면
+            if background_tasks is not None:
+                background_tasks.add_task(trigger_whisper_analysis, audio_path, original_script)
+            else:
+                trigger_whisper_analysis(audio_path, original_script)
+        else:
+            logger.info("No original script provided, skipping whisper analysis trigger.")
         
         return {
             "message": "Video processed successfully",

@@ -1,8 +1,9 @@
-# end.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from vod import app as vod_app
 from speed import app as speed_app
+from main import app as main_app
+from whisper_test import app as whisper_app
 
 app = FastAPI()
 
@@ -14,9 +15,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 서브 앱 마운트: vod.py의 엔드포인트는 /vod 하위에서, speed.py의 엔드포인트는 /speed 하위에서 접근
+# 각 백엔드 앱을 마운트합니다.
 app.mount("/vod", vod_app)
 app.mount("/speed", speed_app)
+app.mount("/ai", main_app)
+app.mount("/whisper", whisper_app)
 
 if __name__ == "__main__":
     import uvicorn
