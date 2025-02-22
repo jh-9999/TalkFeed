@@ -9,6 +9,30 @@
     background-color: #ffffff;
 }
 
+/* 헤더 전체 스타일 */
+.header {
+    width: 110%;
+    display: flex;
+    justify-content: space-between; /* 좌우 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    padding: 0rem 1.2rem;
+    position: relative; /* ✅ 개별 이동 가능하도록 설정 */
+    top: 10px;
+}
+
+/* TalkFeed 글씨 스타일 */
+.header-title {
+    font-size: 1.7rem;
+    font-weight: bold;
+    color: black;
+}
+
+/* 메뉴 아이콘 스타일 */
+.menu-icon {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
 /* 네비게이션 스타일 */
 .scripts-nav {
     justify-content: flex-start; /* 왼쪽 정렬 */
@@ -20,6 +44,7 @@
     margin-bottom: 4rem;
     position: relative; /* ✅ 개별 이동 가능하도록 설정 */
     top: 20px;
+    left: 15px;
 }
 
 .scripts-nav span {

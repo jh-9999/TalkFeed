@@ -98,6 +98,12 @@ function RecordVideo() {
 
   return (
     <div className="record-video-container">
+
+      <div className="header">
+          <h1 className="header-title">TalkFeed</h1>
+          <span className="material-icons menu-icon">menu</span>
+      </div>
+
       <div className="scripts-nav">
         <span
           className={location.pathname.includes("scripts") ? "active-tab" : ""}

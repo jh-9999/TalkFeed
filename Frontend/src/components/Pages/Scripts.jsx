@@ -20,6 +20,12 @@ function Scripts() {
 
     return (
         <div className={`scripts-container ${showModal ? "modal-active" : ""}`}>
+
+            <div className="header">
+                <h1 className="header-title">TalkFeed</h1>
+                <span className="material-icons menu-icon">menu</span>
+            </div>
+            
             {/* 네비게이션 바 */}
             <header className="scripts-header">
                 <div className="scripts-nav">

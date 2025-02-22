@@ -9,6 +9,76 @@
     background-color: #ffffff;
 }
 
+/* 헤더 전체 스타일 */
+.feedback-header {
+    width: 110%;
+    display: flex;
+    justify-content: space-between; /* 좌우 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    padding: 0rem 1.2rem;
+    position: relative; /* ✅ 개별 이동 가능하도록 설정 */
+    top: 10px;
+    right: 17px;
+}
+
+/* TalkFeed 글씨 스타일 */
+.feedback-header-title {
+    font-size: 1.7rem;
+    font-weight: bold;
+    color: black;
+}
+
+/* 메뉴 아이콘 스타일 */
+.feedback-menu-icon {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+
+
+/* ✅ 네비게이션 바 스타일 (탭 메뉴) */
+.feedback-nav {
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    padding-right: 165px; /* 오른쪽 여백 추가 */
+    display: flex; /* 가로 정렬 */
+    justify-content: center; /* 중앙 정렬 */
+    gap: 20px; /* 각 탭 사이 간격 */
+    font-size: 1rem; /* 폰트 크기 */
+    margin-bottom: 4rem; /* 아래쪽 여백 */
+    position: relative; /* 위치 조정 가능하도록 설정 */
+    top: 20px; /* 위에서 20px 내려오도록 설정 */
+    left: 3px;
+}
+
+/* ✅ 네비게이션 바의 개별 탭 스타일 */
+.feedback-nav span {
+    color: gray; /* 기본 글자 색상 */
+    cursor: pointer; /* 마우스 오버 시 클릭 가능하도록 설정 */
+    font-weight: normal; /* 기본 글씨 굵기 */
+    position: relative; /* 위치 조정 가능하도록 설정 */
+    padding-bottom: 5px; /* 글자 아래 여백 */
+}
+
+/* ✅ 선택된 탭 스타일 (현재 활성화된 탭) */
+.feedback-nav .active-tab {
+    font-weight: bold; /* 글자 굵게 */
+    color: #003BD0; /* 글자 색상: 파란색 */
+    position: relative; /* 위치 조정 가능하도록 설정 */
+}
+
+/* ✅ 선택된 탭 밑줄 스타일 */
+.feedback-nav .active-tab::after {
+    content: ""; /* 가상 요소 생성 */
+    position: absolute; /* 위치 절대값 설정 */
+    bottom: 0; /* 아래쪽 정렬 */
+    left: 50%; /* 중앙 정렬 */
+    transform: translateX(-50%); /* 가로 방향 중앙 정렬 */
+    width: 100%; /* 밑줄 길이 */
+    height: 2px; /* 밑줄 두께 */
+    background-color: #003BD0; /* 밑줄 색상: 파란색 */
+    border-radius: 2px; /* 끝부분 둥글게 */
+}
+
 
 /* ✅ "분석결과" & "표정 분석 결과" 왼쪽 정렬 */
 .emotion-title {

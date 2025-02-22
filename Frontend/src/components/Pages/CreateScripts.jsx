@@ -60,6 +60,12 @@ function CreateScripts() {
 
   return (
     <div className="create-scripts-container">
+
+      <div className="header">
+          <h1 className="header-title">TalkFeed</h1>
+          <span className="material-icons menu-icon">menu</span>
+      </div>
+
       {/* 네비게이션 */}
       <div className="scripts-nav">
         <span

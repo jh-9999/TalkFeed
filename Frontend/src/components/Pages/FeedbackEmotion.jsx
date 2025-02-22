@@ -41,8 +41,14 @@ function FeedbackEmotion() {
 
   return (
     <div className="feedback-emotion-container">
+
+      <div className="feedback-header">
+          <h1 className="feedback-header-title">TalkFeed</h1>
+          <span className="material-icons feedback-menu-icon">menu</span>
+      </div>
+
       {/* ✅ 네비게이션 바 */}
-      <div className="scripts-nav">
+      <div className="feedback-nav">
         <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>Scripts</span>
         <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>Video</span>
         <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>Feedback</span>
