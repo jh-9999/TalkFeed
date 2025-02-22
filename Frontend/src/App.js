@@ -1,3 +1,4 @@
+// import Emotion from './components/Emotion';
 import Main from './components/Main';
 import React from "react";
 import StartPage from "./components/Pages/StartPage";
@@ -21,6 +22,7 @@ const App = () => {
   return (
     <div className="app-container">
       <Routes>
+        {/* <Route path="/emotion" element={<Emotion />} /> */}
         <Route path="/" element={<StartPage/>} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/login" element={<LogIn />} />
@@ -29,7 +31,6 @@ const App = () => {
         <Route path="/scripts" element={<Scripts />} />
         <Route path="/create-scripts" element={<CreateScripts />} />
         <Route path="/create-scripts-output" element={<CreateScriptsOutput />} />
-        {/* <Route path="/upload" element={<UploadVideo />} /> */}
         <Route path="/uploadvideo" element={<UploadVideo />} />
         <Route path="/video" element={<UploadVideo />} />
         <Route path="/record" element={<RecordVideo />} />

@@ -112,3 +112,50 @@
 .feedback-item:hover {
     background: #f5f5f5;
 }
+
+/* 팝업 모달 오버레이 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* 반투명 검정 배경으로 뒷 배경 흐리게 효과 */
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100; /* 다른 요소들 위에 표시 */
+}
+
+/* 오버레이: 전체 화면을 덮고, 가로 중앙 + 상단 정렬 */
+.modal-overlay {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+  
+    /* 팝업을 가로 중앙, 세로 상단에 배치 */
+    display: flex;
+    justify-content: center;  /* 가로 중앙 */
+    align-items: flex-start;  /* 세로 상단 */
+  }
+  
+  /* 팝업창: iPhone 14 해상도(393×844)에 맞춤 */
+  .modal-content {
+    position: relative;
+    width: 393px;
+    height: 586px;
+    background: #ffffff;
+    margin-top: 0;      /* 상단부터 시작 */
+    border-radius: 0;   /* 모서리 둥글림 제거 (원하시면 수정) */
+    overflow-y: auto;   /* 내부 내용이 넘치면 스크롤 */
+    box-sizing: border-box;
+    /* 내부 여백을 원하면 padding 추가 */
+    /* padding: 1rem; */
+  }
