@@ -1,90 +1,78 @@
 .feedback-emotion-container {
-    position: relative; /* ✅ 부모 요소 기준으로 absolute 적용 */
+    position: relative;
     width: 100%;
     height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* ✅ 왼쪽 정렬 */
+    align-items: flex-start;
     padding: 1rem;
     background-color: #ffffff;
-}
-
-
-/* ✅ "분석결과" & "표정 분석 결과" 왼쪽 정렬 */
-.emotion-title {
+  }
+  
+  .emotion-title {
     position: relative;
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
     text-align: left;
     width: 100%;
-    display: block;
-    padding-left: 10px; /* ✅ 왼쪽 여백 */
-}
-
-/* ✅ 도넛 차트와 점수 리스트를 감싸는 컨테이너 */
-.chart-container {
-    display: flex; /* 가로 정렬 */
-    align-items: center; /* 가운데 정렬 */
-    justify-content: space-between; /* 양쪽 끝 정렬 */
-    width: 90%; /* 전체 너비의 90% 사용 */
-    margin-top: 20px; /* 위쪽 여백 */
-}
-
-/* ✅ 도넛 차트 컨테이너 */
-.emotion-chart-wrapper {
+    padding-left: 10px;
+  }
+  
+  .chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    margin-top: 20px;
+  }
+  
+  .emotion-chart-wrapper {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 101px;
-    height: 101px; 
+    height: 101px;
     margin-left: 38px;
-}
-
-/* ✅ 도넛 차트 내부 점수 텍스트 (오른쪽으로 이동) */
-.emotion-chart-text {
+  }
+  
+  .emotion-chart-text {
     position: absolute;
-    left: 150%;  /* ✅ 도넛 차트 기준 오른쪽으로 이동 */
-    top: 50%;    /* ✅ 중앙 정렬 */
-    transform: translateY(-58%); /* ✅ 세로 중앙 정렬 */
+    left: 150%;
+    top: 50%;
+    transform: translateY(-58%);
     font-size: 36px;
     font-weight: bold;
     color: black;
-    white-space: nowrap; /* ✅ 텍스트가 줄 바꿈되지 않도록 설정 */
-}
-
-
-/* ✅ "전체 보기" 버튼 위치 조정 */
-.see-all {
+    white-space: nowrap;
+  }
+  
+  .see-all {
     position: absolute;
-    top: 130px; /* ✅ 기존보다 위로 올림 */
-    right: 15px; /* ✅ 오른쪽 여백 조정 */
+    top: 130px;
+    right: 15px;
     font-size: 14px;
     color: #888;
     cursor: pointer;
-    white-space: nowrap; /* ✅ 줄 바꿈 방지 */
-    z-index: 10; /* ✅ 다른 요소 위로 배치 */
-}
-
-
-/* ✅ 분석 상세 결과 리스트 위에 회색 박스 */
-.feedback-divider {
+    white-space: nowrap;
+    z-index: 10;
+  }
+  
+  .feedback-divider {
     width: 390px;
     height: 4px;
-    background-color: #F5F5F5;
+    background-color: #f5f5f5;
     margin-bottom: 10px;
-}
-
-/* ✅ 분석 상세 결과 리스트 */
-.feedback-list {
+  }
+  
+  .feedback-list {
     max-width: 340px;
     width: 100%;
     padding: 0;
-}
-
-/* ✅ 리스트 아이템 스타일 */
-.feedback-item {
+  }
+  
+  .feedback-item {
     display: flex;
     align-items: center;
     padding: 10px 15px;
@@ -93,30 +81,64 @@
     cursor: pointer;
     width: 100%;
     font-weight: bold;
-}
-
-/* ✅ 아이콘 스타일 */
-.icon {
-    font-size: 20px;
+  }
+  
+  .icon-img {
+    width: 20px;
+    height: 20px;
     margin-right: 8px;
-}
-
-/* ✅ 화살표 스타일 */
-.arrow {
+    vertical-align: middle;
+  }
+  
+  .arrow {
     font-size: 20px;
     margin-left: auto;
     font-weight: bold;
-}
-
-/* ✅ 리스트 아이템 호버 효과 */
-.feedback-item:hover {
+  }
+  
+  .feedback-item:hover {
     background: #f5f5f5;
-}
-
-/* ✅ 이미지 아이콘 크기 및 정렬 */
-.icon-img {
-    width: 20px;  /* ✅ 아이콘 크기 (원하는 크기로 조정 가능) */
-    height: 20px; /* ✅ 아이콘 크기 */
-    margin-right: 8px; /* ✅ 텍스트와 간격 조정 */
-    vertical-align: middle; /* ✅ 수직 정렬 */
-}
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .modal-content {
+    position: relative;
+    width: 393px;
+    height: 586px;
+    background: #ffffff;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+  
+  .modal-close-button {
+    background-color: #003bd0;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1rem;
+  }
+  
+  .result-box {
+    border: 1px solid black;
+    background-color: #f9f9f9;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  

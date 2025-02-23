@@ -106,8 +106,8 @@ async def predict(data: PresentationRequest):
 
         prompt, max_tokens = create_presentation_prompt(data)
         
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5",
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
             messages=[
                 {
                     "role": "system",

@@ -127,7 +127,9 @@ async def analyze_whisper(
         logger.info(f"Received file '{file.filename}' of size: {len(audio_bytes)} bytes")
         audio_file = NamedBytesIO(audio_bytes, name=file.filename)
 
-        transcript = openai.Audio.transcribe(
+        client = openai.OpenAI()  # 새로운 클라이언트 객체 생성
+
+        transcript = client.audio.transcriptions.create(
             model="whisper-1",
             file=audio_file,
             response_format="verbose_json",
@@ -135,8 +137,8 @@ async def analyze_whisper(
             language="ko"
         )
         logger.info("Whisper API 호출 성공.")
-        segments = transcript.get("segments", [])
-        refined_text = " ".join([seg["text"].strip() for seg in segments])
+        segments = transcript.segments if transcript.segments else []
+        refined_text = " ".join([seg.text.strip() for seg in segments])
         transcription_text = clean_text(refined_text)
         original_clean = clean_text(original_script)
         diff_html, diff_count = create_diff_html_and_count(original_clean, transcription_text)

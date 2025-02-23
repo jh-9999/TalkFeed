@@ -4,6 +4,7 @@ from vod import app as vod_app
 from speed import app as speed_app
 from main import app as main_app
 from whisper_test import app as whisper_app
+from emotion import app as emotion_app
 
 app = FastAPI()
 
@@ -20,6 +21,7 @@ app.mount("/vod", vod_app)
 app.mount("/speed", speed_app)
 app.mount("/ai", main_app)
 app.mount("/whisper", whisper_app)
+app.mount("/emotion", emotion_app)
 
 if __name__ == "__main__":
     import uvicorn
