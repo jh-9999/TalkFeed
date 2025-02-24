@@ -7,7 +7,7 @@ import traceback
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-import requests  # 직접 HTTP 요청용
+import requests  # 직접 HTTP 요청용.
 import openai
 
 logging.basicConfig(level=logging.INFO)
