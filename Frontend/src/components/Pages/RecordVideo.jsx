@@ -7,11 +7,14 @@ function RecordVideo() {
   const mediaRecorderRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  // CreateScriptsOutput에서 전달된 대본을 받아옵니다.
+  const generatedScript = location.state?.script || "";
+
   const [stream, setStream] = useState(null);
   const [recording, setRecording] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
 
-  // 웹캠 활성화 및 video element에 스트림 할당
+  // 웹캠 활성화
   const startWebcam = async () => {
     try {
       const newStream = await navigator.mediaDevices.getUserMedia({
@@ -28,7 +31,7 @@ function RecordVideo() {
     }
   };
 
-  // 녹화 시작: MediaRecorder를 생성하고 데이터 청크를 수집
+  // 녹화 시작
   const startRecording = () => {
     if (!stream) {
       alert("먼저 카메라를 켜주세요.");
@@ -59,7 +62,7 @@ function RecordVideo() {
     console.log("녹화 시작됨");
   };
 
-  // 녹화 중지: MediaRecorder의 stop() 호출
+  // 녹화 중지
   const stopRecording = () => {
     if (mediaRecorderRef.current && recording) {
       mediaRecorderRef.current.stop();
@@ -68,9 +71,8 @@ function RecordVideo() {
     }
   };
 
-  // 녹화된 데이터 업로드: Blob으로 변환 후 FastAPI에 POST 요청
+  // 녹화된 데이터 업로드 (대본 포함)
   const handleSaveRecording = async () => {
-    console.log("업로드 시도, recordedChunks 길이:", recordedChunks.length);
     if (recordedChunks.length === 0) {
       alert("녹화된 데이터가 없습니다. 녹화를 중지했는지 확인하세요.");
       return;
@@ -78,8 +80,8 @@ function RecordVideo() {
     const blob = new Blob(recordedChunks, { type: "video/webm" });
     const formData = new FormData();
     formData.append("file", blob, "recorded-video.webm");
-    // 녹화의 경우 원본 스크립트가 없으므로 빈 문자열 전송
-    formData.append("original_script", "");
+    // 전달받은 대본을 original_script 필드에 포함시킵니다.
+    formData.append("original_script", generatedScript);
     try {
       const response = await fetch("http://localhost:8000/vod/upload/", {
         method: "POST",

@@ -1,13 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import "./FeedbackEmotion.css"; // 기존 CSS 파일 유지
+import "./FeedbackEmotion.css";
 import feedbackIcon from "./feedbackicon.png";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -23,9 +18,9 @@ function FeedbackEmotion() {
   const data = {
     datasets: [
       {
-        data: [75, 25], 
-        backgroundColor: ["#4880EE", "#E0E0E0"], 
-        borderWidth: 0, 
+        data: [75, 25],
+        backgroundColor: ["#4880EE", "#E0E0E0"],
+        borderWidth: 0,
       },
     ],
   };
@@ -42,12 +37,33 @@ function FeedbackEmotion() {
     },
   };
 
-  // "자세히 보기" 버튼 클릭 시, emotion 분석 결과를 가져옵니다.
+  // 응답 데이터를 기반으로 집계 계산 함수
+  const computeAggregates = (dataObj) => {
+    const emotions = ["HAPPY", "SAD", "ANGRY", "CONFUSED", "DISGUSTED", "SURPRISED", "CALM", "FEAR"];
+    let totalImages = Object.keys(dataObj).length;
+    let noFaceCount = 0;
+    let emotionCounts = {};
+    emotions.forEach((emo) => (emotionCounts[emo] = 0));
+
+    Object.values(dataObj).forEach((resultObj) => {
+      if (!resultObj.results || resultObj.results.length === 0) {
+        noFaceCount++;
+      } else {
+        resultObj.results.forEach((emotionData) => {
+          let emo = emotionData.emotion;
+          emotionCounts[emo] = (emotionCounts[emo] || 0) + 1;
+        });
+      }
+    });
+    return { totalImages, noFaceCount, emotionCounts };
+  };
+
+  // "자세히 보기" 버튼 클릭 시, GET 요청으로 emotion 분석 결과를 가져옴
   const openPopup = async () => {
     setIsPopupOpen(true);
     setLoading(true);
     try {
-      // GET URL을 /emotion/analysis-results로 수정합니다.
+      // emotion.py의 GET 엔드포인트 (end.py에 마운트된 emotion 앱)
       const res = await fetch("http://localhost:8000/emotion/analysis-results?" + new Date().getTime());
       const data = await res.json();
       setAnalysisResult(data);
@@ -62,6 +78,9 @@ function FeedbackEmotion() {
   const closePopup = () => {
     setIsPopupOpen(false);
   };
+
+  // analysisResult가 있으면 집계 계산
+  const aggregates = analysisResult ? computeAggregates(analysisResult) : null;
 
   return (
     <div className="feedback-emotion-container">
@@ -86,6 +105,9 @@ function FeedbackEmotion() {
           Feedback
         </span>
       </div>
+
+      {/* 네비게이션 밑 회색 줄 */}
+      <div className="nav-underline"></div>
 
       <h2 className="emotion-title">표정 분석 결과</h2>
       <span className="see-all" onClick={openPopup}>자세히 보기</span>
@@ -123,9 +145,9 @@ function FeedbackEmotion() {
               <p>분석 결과 로딩 중...</p>
             ) : analysisResult ? (
               <div className="result-box">
-                <p>Total Images: {analysisResult.total_images}</p>
-                <p>No Face Detected: {analysisResult.no_face_count}</p>
-                <p>Emotion Counts: {JSON.stringify(analysisResult.emotion_counts)}</p>
+                <p>Total Images: {aggregates.totalImages}</p>
+                <p>No Face Detected: {aggregates.noFaceCount}</p>
+                <p>Emotion Counts: {JSON.stringify(aggregates.emotionCounts)}</p>
               </div>
             ) : (
               <p>분석 결과가 없습니다.</p>

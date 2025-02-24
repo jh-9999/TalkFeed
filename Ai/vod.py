@@ -113,7 +113,8 @@ def read_root():
 
 # 백그라운드 작업: Whisper 분석 트리거
 def trigger_whisper_analysis(audio_path: str, original_script: str):
-    whisper_url = "http://localhost:8000/whisper/analysis-results"
+    # 변경된 URL: whisper 앱의 /update-results 엔드포인트
+    whisper_url = "http://localhost:8000/whisper/update-results"
     logger.info("Sending audio file and original script to whisper analysis endpoint (background)...")
     with open(audio_path, "rb") as audio_file:
         files = {"file": (os.path.basename(audio_path), audio_file, "audio/mpeg")}
@@ -126,7 +127,6 @@ def trigger_whisper_analysis(audio_path: str, original_script: str):
                 logger.info(f"Whisper analysis triggered successfully: {response.json()}")
         except Exception as e:
             logger.error(f"Error triggering whisper analysis in background: {e}")
-
 # 기존 속도 분석 트리거 (유지)
 def trigger_speed_analysis(audio_path: str):
     speed_url = "http://localhost:8000/speed/upload-audio"

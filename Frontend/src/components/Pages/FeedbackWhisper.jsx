@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import "./FeedbackWhisper.css";
 import feedbackIcon from "./feedbackicon.png";
@@ -43,12 +38,12 @@ function FeedbackWhisper() {
     },
   };
 
-  // 팝업 열기: Whisper 분석 결과 GET
+  // "자세히 보기" 버튼 클릭 시 GET 요청 URL 수정: "/whisper/analysis-results"
   const openPopup = async () => {
     setIsPopupOpen(true);
     setLoadingResults(true);
     try {
-      const res = await fetch("http://localhost:8000/whisper/analysis-results?" + new Date().getTime());
+      const res = await fetch("http://localhost:8000/whisper/analysis-results");
       const data = await res.json();
       setAnalysisResults(data);
     } catch (error) {
@@ -140,7 +135,6 @@ function FeedbackWhisper() {
                   <p>틀린 단어 : {analysisResults.diff_count}</p>
                 </div>
                 <div className="result-box">
-                  {/* diff_html은 HTML로 렌더링 */}
                   <div
                     className="whisper-diff-html"
                     dangerouslySetInnerHTML={{ __html: analysisResults.diff_html }}

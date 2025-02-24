@@ -7,6 +7,7 @@ import traceback
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+import requests  # 직접 HTTP 요청용
 import openai
 
 logging.basicConfig(level=logging.INFO)
@@ -35,7 +36,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-analysis_results_memory = None
+whisper_results_memory = None
 
 class NamedBytesIO(io.BytesIO):
     def __init__(self, *args, name=None, **kwargs):
@@ -44,28 +45,20 @@ class NamedBytesIO(io.BytesIO):
 
 def clean_text(text: str) -> str:
     text = re.sub(r"\[\d+\.\d+s\s*-\s*\d+\.\d+s\]\s*", "", text)
-    text = " ".join(text.split())
-    return text
+    return " ".join(text.split())
 
 def tokenize_with_punctuation(text: str):
     tokens = re.findall(r"\w+|[^\w\s]", text)
     return tokens
 
 def highlight_diff_in_orig(orig_token: str, trans_token: str) -> str:
-    """
-    원본 토큰(orig_token)과 Whisper 토큰(trans_token)이 일부만 다를 때,
-    공통 접두사와 접미사는 그대로 두고 변경된 중간 부분만
-    <span class="diff-delete">...</span>로 감싸 반환합니다.
-    """
     i = 0
     min_len = min(len(orig_token), len(trans_token))
     while i < min_len and orig_token[i] == trans_token[i]:
         i += 1
-
     j = 0
     while j < (min_len - i) and orig_token[-1 - j] == trans_token[-1 - j]:
         j += 1
-
     prefix = orig_token[:i]
     if j > 0:
         diff_mid = orig_token[i:len(orig_token) - j]
@@ -73,10 +66,8 @@ def highlight_diff_in_orig(orig_token: str, trans_token: str) -> str:
     else:
         diff_mid = orig_token[i:]
         suffix = ""
-
     if diff_mid:
         diff_mid = f'<span class="diff-delete">{diff_mid}</span>'
-    
     return prefix + diff_mid + suffix
 
 def create_diff_html_and_count(orig: str, trans: str) -> (str, int):
@@ -111,34 +102,37 @@ def create_diff_html_and_count(orig: str, trans: str) -> (str, int):
             pass
     return ' '.join(diff_parts), diff_count
 
-@app.post("/analysis-results")
-async def analyze_whisper(
-    original_script: str = Form(""),  # 기본값을 빈 문자열로 설정
+@app.post("/update-results")
+async def update_whisper_results(
+    original_script: str = Form(...),
     file: UploadFile = File(...)
 ):
-    global analysis_results_memory
-    # 새로운 분석 요청 시 이전 결과 초기화
-    analysis_results_memory = None
-
-    if file.content_type not in ["audio/mpeg", "audio/mp3"]:
-        raise HTTPException(status_code=400, detail="지원되지 않는 파일 형식입니다. MP3 파일을 업로드해주세요.")
+    global whisper_results_memory
     try:
         audio_bytes = await file.read()
         logger.info(f"Received file '{file.filename}' of size: {len(audio_bytes)} bytes")
         audio_file = NamedBytesIO(audio_bytes, name=file.filename)
-
-        client = openai.OpenAI()  # 새로운 클라이언트 객체 생성
-
-        transcript = client.audio.transcriptions.create(
-            model="whisper-1",
-            file=audio_file,
-            response_format="verbose_json",
-            temperature=0.0,
-            language="ko"
-        )
+        # Whisper API 호출을 위해 직접 HTTP 요청 사용
+        headers = {
+            "Authorization": f"Bearer {openai.api_key}"
+        }
+        files_payload = {
+            "file": (audio_file.name, audio_file, "audio/mpeg")
+        }
+        data_payload = {
+            "model": "whisper-1",
+            "response_format": "verbose_json",
+            "temperature": 0.0,
+            "language": "ko"
+        }
+        response = requests.post("https://api.openai.com/v1/audio/transcriptions", headers=headers, files=files_payload, data=data_payload)
+        if response.status_code != 200:
+            logger.error(f"Whisper API 호출 실패: {response.text}")
+            raise HTTPException(status_code=500, detail="Whisper API 호출 실패")
+        transcript = response.json()
         logger.info("Whisper API 호출 성공.")
-        segments = transcript.segments if transcript.segments else []
-        refined_text = " ".join([seg.text.strip() for seg in segments])
+        segments = transcript.get("segments", [])
+        refined_text = " ".join([seg.get("text", "").strip() for seg in segments])
         transcription_text = clean_text(refined_text)
         original_clean = clean_text(original_script)
         diff_html, diff_count = create_diff_html_and_count(original_clean, transcription_text)
@@ -146,13 +140,14 @@ async def analyze_whisper(
         total_words = len(orig_tokens)
         accuracy = ((total_words - diff_count) / total_words) * 100 if total_words > 0 else 100.0
 
-        analysis_results_memory = {
+        whisper_results_memory = {
             "accuracy": accuracy,
             "diff_count": diff_count,
             "diff_html": diff_html,
-            "original_clean": original_clean
+            "original_clean": original_clean,
+            "transcription": transcription_text
         }
-        return analysis_results_memory
+        return whisper_results_memory
     except Exception as e:
         logger.error(f"오류 발생: {str(e)}")
         logger.error(traceback.format_exc())
@@ -160,9 +155,9 @@ async def analyze_whisper(
 
 @app.get("/analysis-results")
 async def get_whisper_analysis():
-    if analysis_results_memory is None:
+    if whisper_results_memory is None:
         raise HTTPException(status_code=404, detail="분석 결과가 없습니다.")
-    return analysis_results_memory
+    return whisper_results_memory
 
 if __name__ == "__main__":
     import uvicorn

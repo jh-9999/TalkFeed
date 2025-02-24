@@ -5,7 +5,7 @@ import "./CreateScriptsOutput.css";
 function CreateScriptsOutput() {
   const navigate = useNavigate();
   const location = useLocation();
-  const script = location.state?.script || ""; // 전달받은 스크립트 결과
+  const script = location.state?.script || ""; // 생성된 스크립트 결과
 
   // 스크립트 재생성 버튼 클릭 시 CreateScripts.jsx로 이동
   const handleReplay = () => {
@@ -21,6 +21,11 @@ function CreateScriptsOutput() {
     link.click();
   };
 
+  // 동영상 업로드 페이지로 이동할 때 생성된 스크립트를 state에 포함시킵니다.
+  const handleUploadVideo = () => {
+    navigate("/uploadvideo", { state: { script } });
+  };
+
   return (
     <div className="scripts-output-container">
       {/* 네비게이션 */}
@@ -33,7 +38,7 @@ function CreateScriptsOutput() {
         </span>
         <span
           className={location.pathname.includes("video") ? "active-tab" : ""}
-          onClick={() => navigate("/uploadvideo")}
+          onClick={handleUploadVideo}
         >
           Video
         </span>
@@ -46,7 +51,7 @@ function CreateScriptsOutput() {
       </div>
 
       {/* 생성된 스크립트 박스 */}
-      <textarea 
+      <textarea
         className="scripts-output-box"
         placeholder="생성된 스크립트"
         readOnly
@@ -64,10 +69,14 @@ function CreateScriptsOutput() {
       </button>
 
       {/* 발표 영상 업로드 및 녹화 버튼 */}
-      <button className="scripts-upload-button" onClick={() => navigate("/uploadvideo")}>
-        <span className="material-icons" style={{ color: "white" }}>videocam</span> 
+      <button className="scripts-upload-button" onClick={handleUploadVideo}>
+        <span className="material-icons" style={{ color: "white" }}>
+          videocam
+        </span>
         발표 영상 업로드 및 녹화
-        <span className="material-icons" style={{ color: "white" }}>arrow_forward</span>
+        <span className="material-icons" style={{ color: "white" }}>
+          arrow_forward
+        </span>
       </button>
     </div>
   );
