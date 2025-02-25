@@ -44,8 +44,19 @@ class NamedBytesIO(io.BytesIO):
         self.name = name
 
 def clean_text(text: str) -> str:
+    # 타임스탬프 등 불필요한 부분 제거
     text = re.sub(r"\[\d+\.\d+s\s*-\s*\d+\.\d+s\]\s*", "", text)
     return " ".join(text.split())
+
+def filter_special_sentences(text: str) -> str:
+    """
+    텍스트를 문장 단위로 분리한 후,
+    *, #, - 와 같은 특수문자가 하나라도 포함된 문장은 삭제합니다.
+    """
+    # 문장부호(.!? 뒤)를 기준으로 문장 분리
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    filtered = [s for s in sentences if not re.search(r'[\*\#\-]', s)]
+    return " ".join(filtered)
 
 def tokenize_with_punctuation(text: str):
     tokens = re.findall(r"\w+|[^\w\s]", text)
@@ -134,9 +145,14 @@ async def update_whisper_results(
         segments = transcript.get("segments", [])
         refined_text = " ".join([seg.get("text", "").strip() for seg in segments])
         transcription_text = clean_text(refined_text)
+        
+        # 원본 스크립트 클린징 후 특수문자 포함 문장 삭제
         original_clean = clean_text(original_script)
-        diff_html, diff_count = create_diff_html_and_count(original_clean, transcription_text)
-        orig_tokens = tokenize_with_punctuation(original_clean)
+        original_filtered = filter_special_sentences(original_clean)
+        
+        # Whisper로 변환된 텍스트와 비교
+        diff_html, diff_count = create_diff_html_and_count(original_filtered, transcription_text)
+        orig_tokens = tokenize_with_punctuation(original_filtered)
         total_words = len(orig_tokens)
         accuracy = ((total_words - diff_count) / total_words) * 100 if total_words > 0 else 100.0
 
@@ -144,7 +160,7 @@ async def update_whisper_results(
             "accuracy": accuracy,
             "diff_count": diff_count,
             "diff_html": diff_html,
-            "original_clean": original_clean,
+            "original_clean": original_filtered,
             "transcription": transcription_text
         }
         return whisper_results_memory

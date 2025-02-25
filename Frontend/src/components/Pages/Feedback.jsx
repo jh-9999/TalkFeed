@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom"; 
 import {
   Chart as ChartJS,
@@ -16,7 +16,24 @@ function Feedback() {
   const navigate = useNavigate();
   const location = useLocation(); 
 
-  // ✅ 도넛 차트 데이터 설정
+  // LLM 총평 상태 변수
+  const [llmFeedback, setLlmFeedback] = useState("");
+
+  // 컴포넌트 마운트 시 백엔드로부터 총평을 가져옵니다.
+  useEffect(() => {
+    fetch("http://localhost:8000/generate-feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((data) => setLlmFeedback(data.feedback))
+      .catch((error) => {
+        console.error("LLM 총평 불러오기 에러:", error);
+        setLlmFeedback("총평을 불러오는 중 오류가 발생했습니다.");
+      });
+  }, []);
+
+  // 도넛 차트 데이터 설정
   const data = {
     labels: ["표정", "속도", "발음"],
     datasets: [
@@ -43,7 +60,12 @@ function Feedback() {
 
   return (
     <div className="feedback-container">
-      {/* ✅ 네비게이션 바 추가 */}
+      <div className="header">
+          <h1 className="header-title">TalkFeed</h1>
+          <span className="material-icons menu-icon">menu</span>
+      </div>
+
+      {/* 네비게이션 바 */}
       <div className="scripts-nav">
         <span
           className={location.pathname.includes("scripts") ? "active-tab" : ""}
@@ -65,19 +87,17 @@ function Feedback() {
         </span>
       </div>
 
-      {/* ✅ 회색 줄 추가 */}
+      {/* 회색 줄 */}
       <div className="nav-underline"></div>
 
       {/* 분석 결과 박스 */}
       <h2 className="result-title">분석 결과</h2>
 
-      {/* ✅ 도넛 차트 & 점수 리스트를 가로 정렬 */}
+      {/* 도넛 차트와 점수 리스트 */}
       <div className="chart-container">
         <div className="doughnut-chart">
           <Doughnut data={data} options={options} width={101} height={101} />
         </div>
-
-        {/* ✅ 점수 리스트 */}
         <div className="score-list">
             <div className="score-item">
                 <span className="dot blue"></span> <span className="score-label">표정</span>&nbsp;&nbsp;&nbsp;<span className="score">75점</span>
@@ -91,10 +111,21 @@ function Feedback() {
         </div>
       </div>
 
-      {/* ✅ 분석 상세 결과 위에 F5F5F5 색상의 박스 추가 */}
+      {/* 1번 영역: LLM 총평 영역 */}
+      <div className="feedback-detail-grid">
+        <div className="feedback-detail-item">
+          {llmFeedback ? (
+            <p>{llmFeedback}</p>
+          ) : (
+            <p>총평을 불러오는 중입니다...</p>
+          )}
+        </div>
+      </div>
+
+      {/* 분석 상세 결과 위의 구분선 */}
       <div className="feedback-divider"></div>
 
-      {/* ✅ 분석 상세 결과 리스트 */}
+      {/* 분석 상세 결과 리스트 */}
       <div className="feedback-list">
           <div className="feedback-item" onClick={() => navigate("/feedback-emotion")}>
               <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" />&nbsp;표정 분석 결과

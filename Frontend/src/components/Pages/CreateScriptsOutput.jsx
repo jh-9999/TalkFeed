@@ -1,18 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./CreateScriptsOutput.css";
 
 function CreateScriptsOutput() {
   const navigate = useNavigate();
   const location = useLocation();
-  const script = location.state?.script || ""; // 생성된 스크립트 결과
+  // location.state에서 script를 가져오고, 없으면 localStorage에서 읽어옵니다.
+  const initialScript = location.state?.script || localStorage.getItem("generatedScript") || "";
+  const [script, setScript] = useState(initialScript);
+
+  // 컴포넌트가 마운트될 때, location.state에 script가 있으면 localStorage에 저장합니다.
+  useEffect(() => {
+    if (location.state?.script) {
+      localStorage.setItem("generatedScript", location.state.script);
+      setScript(location.state.script);
+    }
+  }, [location.state]);
 
   // 스크립트 재생성 버튼 클릭 시 CreateScripts.jsx로 이동
   const handleReplay = () => {
     navigate("/create-scripts");
   };
 
-  // 스크립트 저장 버튼 클릭 시 동작 (파일 다운로드)
+  // 스크립트 저장 버튼 클릭 시 (파일 다운로드)
   const handleSaveScript = () => {
     const blob = new Blob([script], { type: "text/plain" });
     const link = document.createElement("a");

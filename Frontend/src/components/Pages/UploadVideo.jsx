@@ -8,8 +8,9 @@ function UploadVideo() {
   const location = useLocation();
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // 이전 페이지(CreateScripts.jsx)에서 전달받은 원본 스크립트 (없으면 빈 문자열)
+  // 이전 페이지에서 전달받은 원본 스크립트 (없으면 빈 문자열)
   const originalScript = location.state?.original_script || "";
 
   const handleFileChange = (event) => {
@@ -22,26 +23,31 @@ function UploadVideo() {
       alert("업로드할 파일을 선택하세요.");
       return;
     }
+    if (!originalScript.trim()) {
+      alert("원본 스크립트가 없습니다.");
+      return;
+    }
+    setError("");
     setLoading(true);
     try {
-      // vod.py의 /upload/ 엔드포인트는 end.py에 마운트된 vod 앱의 "/vod/upload/"입니다.
       const videoFormData = new FormData();
+      // 선택된 모든 파일을 추가 (필요에 따라 첫 번째 파일만 선택 가능)
       uploadedFiles.forEach((file) => {
         videoFormData.append("file", file);
       });
-      // 원본 스크립트도 form data에 추가 (Form 필드 이름: original_script)
+      // 원본 스크립트도 추가 (Form 필드 이름: original_script)
       videoFormData.append("original_script", originalScript);
 
       const vodResponse = await axios.post("http://localhost:8000/vod/upload/", videoFormData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("vod.py 처리 완료:", vodResponse.data);
-
-      alert("동영상 업로드 및 처리가 완료되었습니다.");
-      navigate("/uploadvideo");
-    } catch (error) {
-      console.error("업로드 및 처리 실패:", error);
-      alert("업로드 또는 처리에 실패했습니다.");
+      
+      // 분석 결과를 자동으로 Feedback 페이지로 전달하면서 이동
+      navigate("/feedback", { state: { analysisResults: vodResponse.data } });
+    } catch (err) {
+      console.error("업로드 및 처리 실패:", err);
+      setError("업로드 또는 처리에 실패했습니다.");
     } finally {
       setLoading(false);
     }
@@ -82,8 +88,10 @@ function UploadVideo() {
         <input type="file" accept="video/*" multiple onChange={handleFileChange} hidden />
       </label>
 
+      {error && <p className="error-message" style={{ color: "red" }}>{error}</p>}
+
       <button className="upload-done-button" onClick={handleUpload} disabled={loading}>
-        {loading ? "처리 중..." : "완료"}
+        {loading ? "처리 중..." : "업로드 및 분석 시작"}
       </button>
 
       <div className="video-record-section" onClick={() => navigate("/record")}>
