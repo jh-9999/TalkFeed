@@ -163,7 +163,38 @@
     font-weight: bold; /* ✅ 굵기 조정 */
 }
 
-/* ✅ 리스트 아이템 호버 효과 */
-.feedback-item:hover {
-    background: #f5f5f5; /* 마우스 오버 시 배경색 변경 */
+
+/* ✅ 분석 결과 차트 아래에 정리된 점수 칸 스타일 */
+.feedback-detail-grid {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 340px;
+    margin-top: 20px;
+    border-top: 2px solid #F5F5F5;
+    padding-top: 15px;
 }
+
+/* ✅ 개별 점수 항목 스타일 */
+.feedback-detail-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-bottom: 1px solid #F5F5F5;
+}
+
+/* ✅ 점수 앞 색상 점 스타일 */
+.detail-label {
+    flex-grow: 10;
+    padding-left: 10px;
+}
+
+/* ✅ 점수 스타일 */
+.detail-score {
+    font-weight: bold;
+    color: #003BD0;
+}
+

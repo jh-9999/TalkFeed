@@ -1,13 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import "./FeedbackEmotion.css"; // ✅ 새로운 CSS 파일 연결
+import "./FeedbackEmotion.css";
 import feedbackIcon from "./feedbackicon.png";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -15,14 +10,16 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 function FeedbackEmotion() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ 도넛 차트 데이터 설정
   const data = {
     datasets: [
       {
-        data: [75, 25], 
-        backgroundColor: ["#4880EE", "#E0E0E0"], 
-        borderWidth: 0, 
+        data: [75, 25],
+        backgroundColor: ["#4880EE", "#E0E0E0"],
+        borderWidth: 0,
       },
     ],
   };
@@ -36,57 +33,113 @@ function FeedbackEmotion() {
     plugins: {
       tooltip: false,
       legend: false,
+    },
+  };
+
+  const computeAggregates = (dataObj) => {
+    const emotions = ["HAPPY", "SAD", "ANGRY", "CONFUSED", "DISGUSTED", "SURPRISED", "CALM", "FEAR"];
+    let totalImages = Object.keys(dataObj).length;
+    let noFaceCount = 0;
+    let emotionCounts = {};
+    emotions.forEach((emo) => (emotionCounts[emo] = 0));
+
+    Object.values(dataObj).forEach((resultObj) => {
+      if (!resultObj.results || resultObj.results.length === 0) {
+        noFaceCount++;
+      } else {
+        resultObj.results.forEach((emotionData) => {
+          let emo = emotionData.emotion;
+          emotionCounts[emo] = (emotionCounts[emo] || 0) + 1;
+        });
+      }
+    });
+    return { totalImages, noFaceCount, emotionCounts };
+  };
+
+  const openPopup = async () => {
+    setIsPopupOpen(true);
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:8000/emotion/analysis-results?" + new Date().getTime());
+      const data = await res.json();
+      setAnalysisResult(data);
+    } catch (error) {
+      console.error("Emotion analysis 결과 가져오는 중 오류 발생:", error);
+      setAnalysisResult(null);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
+  };
+
+  const aggregates = analysisResult ? computeAggregates(analysisResult) : null;
 
   return (
     <div className="feedback-emotion-container">
 
-      <div className="feedback-header">
-          <h1 className="feedback-header-title">TalkFeed</h1>
-          <span className="material-icons feedback-menu-icon">menu</span>
+      {/* ✅ TalkFeed 로고 & 햄버거 메뉴 아이콘 추가 */}
+      <div className="header">
+        <h1 className="header-title">TalkFeed</h1>
+        <span className="material-icons menu-icon">menu</span>
       </div>
 
-      {/* ✅ 네비게이션 바 */}
       <div className="feedback-nav">
         <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>Scripts</span>
         <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>Video</span>
         <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>Feedback</span>
       </div>
 
-      {/* ✅ 네비게이션 바 밑 회색 줄 */}
       <div className="nav-underline"></div>
 
-      {/* ✅ 분석 결과 타이틀 */}
       <h2 className="emotion-title">표정 분석 결과</h2>
-      <span className="see-all">자세히 보기</span>
+      <span className="see-all" onClick={openPopup}>자세히 보기</span>
 
-      {/* ✅ 도넛 차트 (표정 분석 결과) */}
       <div className="chart-container">
-      <div className="emotion-chart-wrapper">
-        <Doughnut data={data} options={options} width={101} height={101} />
-        <div className="emotion-chart-text">75점</div>
-      </div>
+        <div className="emotion-chart-wrapper">
+          <Doughnut data={data} options={options} width={101} height={101} />
+          <div className="emotion-chart-text">75점</div>
+        </div>
       </div>
 
-      {/* ✅ 분석 상세 결과 리스트 위에 회색 박스 */}
       <div className="feedback-divider"></div>
 
-      {/* ✅ 분석 상세 결과 리스트 */}
       <div className="feedback-list">
-      <div className="feedback-item" onClick={() => navigate("/feedback")}>
-            <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" />&nbsp;전체 분석 결과
-            <span className="arrow">{">"}</span>
+        <div className="feedback-item" onClick={() => navigate("/feedback")}>
+          <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" />&nbsp;전체 분석 결과
+          <span className="arrow">{">"}</span>
         </div>
         <div className="feedback-item" onClick={() => navigate("/feedback-speed")}>
-            <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" />&nbsp;속도 분석 결과
-            <span className="arrow">{">"}</span>
+          <img src={feedbackIcon} alt="속도 분석 아이콘" className="icon-img" />&nbsp;속도 분석 결과
+          <span className="arrow">{">"}</span>
         </div>
         <div className="feedback-item" onClick={() => navigate("/feedback-whisper")}>
-            <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" />&nbsp;발음 분석 결과 
-            <span className="arrow">{">"}</span>
+          <img src={feedbackIcon} alt="발음 분석 아이콘" className="icon-img" />&nbsp;발음 분석 결과
+          <span className="arrow">{">"}</span>
         </div>
       </div>
+
+      {isPopupOpen && (
+        <div className="modal-overlay" onClick={closePopup}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>상세 분석 결과</h3>
+            {loading ? (
+              <p>분석 결과 로딩 중...</p>
+            ) : analysisResult ? (
+              <div className="result-box">
+                <p>Total Images: {aggregates.totalImages}</p>
+                <p>No Face Detected: {aggregates.noFaceCount}</p>
+                <p>Emotion Counts: {JSON.stringify(aggregates.emotionCounts)}</p>
+              </div>
+            ) : (
+              <p>분석 결과가 없습니다.</p>
+            )}
+            <button className="modal-close-button" onClick={closePopup}>닫기</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

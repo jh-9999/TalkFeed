@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import "./FeedbackWhisper.css";
 import feedbackIcon from "./feedbackicon.png";
@@ -19,7 +14,7 @@ function FeedbackWhisper() {
   const [analysisResults, setAnalysisResults] = useState(null);
   const [loadingResults, setLoadingResults] = useState(false);
 
-  // 도넛 차트 데이터 설정 (예시)
+  // 도넛 차트 데이터 (예시)
   const data = {
     datasets: [
       {
@@ -30,6 +25,7 @@ function FeedbackWhisper() {
     ],
   };
 
+  // 차트 옵션 (예시)
   const options = {
     responsive: false,
     maintainAspectRatio: false,
@@ -39,21 +35,20 @@ function FeedbackWhisper() {
     plugins: {
       tooltip: false,
       legend: false,
-    }
+    },
   };
 
-  // 팝업 열기: 백엔드에서 분석 결과 JSON을 가져옴
+  // "자세히 보기" 버튼 클릭 시 GET 요청 URL 수정: "/whisper/analysis-results"
   const openPopup = async () => {
     setIsPopupOpen(true);
     setLoadingResults(true);
     try {
-      // 엔드포인트 URL: whisper 분석 결과 가져오기
-      const res = await fetch("http://localhost:8000/whisper/analysis-results?" + new Date().getTime());
+      const res = await fetch("http://localhost:8000/whisper/analysis-results");
       const data = await res.json();
-      setAnalysisResults(data.results);
+      setAnalysisResults(data);
     } catch (error) {
       console.error("분석 결과를 가져오는 중 오류 발생:", error);
-      setAnalysisResults([]);
+      setAnalysisResults(null);
     } finally {
       setLoadingResults(false);
     }
@@ -65,24 +60,17 @@ function FeedbackWhisper() {
 
   return (
     <div className="feedback-emotion-container">
-
-
-      <div className="feedback-header">
-          <h1 className="feedback-header-title">TalkFeed</h1>
-          <span className="material-icons feedback-menu-icon">menu</span>
+      {/* ✅ TalkFeed 로고 & 햄버거 메뉴 아이콘 추가 */}
+      <div className="header">
+        <h1 className="header-title">TalkFeed</h1>
+        <span className="material-icons menu-icon">menu</span>
       </div>
 
       {/* 네비게이션 바 */}
       <div className="feedback-nav">
-        <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>
-          Scripts
-        </span>
-        <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>
-          Video
-        </span>
-        <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>
-          Feedback
-        </span>
+        <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>Scripts</span>
+        <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>Video</span>
+        <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>Feedback</span>
       </div>
 
       {/* 네비게이션 밑 회색 줄 */}
@@ -106,15 +94,18 @@ function FeedbackWhisper() {
       {/* 분석 상세 결과 리스트 */}
       <div className="feedback-list">
         <div className="feedback-item" onClick={() => navigate("/feedback")}>
-          <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" />&nbsp;전체 분석 결과
+          <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" />
+          &nbsp;전체 분석 결과
           <span className="arrow">{">"}</span>
         </div>
         <div className="feedback-item" onClick={() => navigate("/feedback-emotion")}>
-          <img src={feedbackIcon} alt="표정 분석 아이콘" className="icon-img" />&nbsp;표정 분석 결과
+          <img src={feedbackIcon} alt="표정 분석 아이콘" className="icon-img" />
+          &nbsp;표정 분석 결과
           <span className="arrow">{">"}</span>
         </div>
         <div className="feedback-item" onClick={() => navigate("/feedback-speed")}>
-          <img src={feedbackIcon} alt="속도 분석 아이콘" className="icon-img" />&nbsp;속도 분석 결과 
+          <img src={feedbackIcon} alt="속도 분석 아이콘" className="icon-img" />
+          &nbsp;속도 분석 결과 
           <span className="arrow">{">"}</span>
         </div>
       </div>
@@ -126,18 +117,20 @@ function FeedbackWhisper() {
             <h3>상세 분석 결과</h3>
             {loadingResults ? (
               <p>분석 결과 로딩 중...</p>
-            ) : analysisResults && analysisResults.length > 0 ? (
+            ) : analysisResults ? (
               <div className="results-list">
-                {analysisResults.map((seg, idx) => (
-                  <div key={idx} className="result-item">
-                    <p>
-                      세그먼트: {seg.segment} | 시작: {seg.start_time.toFixed(2)}s | 종료: {seg.end_time.toFixed(2)}s
-                    </p>
-                    <p>
-                      길이: {seg.duration.toFixed(2)}s | 볼륨: {seg.volume.toFixed(2)}dB | 발음 정확도: {seg.accuracy}
-                    </p>
-                  </div>
-                ))}
+                <div className="result-box">
+                  <p>정확도 : {analysisResults.accuracy?.toFixed(2)}%</p>
+                </div>
+                <div className="result-box">
+                  <p>틀린 단어 : {analysisResults.diff_count}</p>
+                </div>
+                <div className="result-box">
+                  <div
+                    className="whisper-diff-html"
+                    dangerouslySetInnerHTML={{ __html: analysisResults.diff_html }}
+                  />
+                </div>
               </div>
             ) : (
               <p>분석 결과가 없습니다.</p>
