@@ -6,6 +6,7 @@ node.js
 
 # aip 키
 openai, aws 키 필요\
+키의 파일명은 `.env`\
 `ai/`폴더에 openai, aws 키 위치\
 `backend/src/`폴더에 openai 키 위치
 
