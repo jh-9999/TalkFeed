@@ -3,7 +3,7 @@
 
 
 # 라이브러리 설치
-'pip freeze > requirements.txt'
+' pip freeze > requirements.txt '
 
 
 # 실행
