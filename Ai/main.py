@@ -1,16 +1,15 @@
+import os
+import re
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import openai
-import os
 
 # OpenAI API 키 설정
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# FastAPI 앱 초기화
 app = FastAPI()
 
-# CORS 설정
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
@@ -48,7 +47,6 @@ def create_presentation_prompt(data: PresentationRequest) -> tuple:
         f"1. 주제: {data.topic}\n"
         f"2. 발표 목적: {data.purpose}\n"
         f"3. 핵심 전달 내용: {data.summary}\n"
-        # 여기서 선택한 발표 시간이 프롬프트에 반영됩니다.
         f"4. 발표 시간: {data.duration}\n\n"
         "스크립트 구조 요구사항:\n"
         "1. 도입부 (전체의 20%):\n"
@@ -91,6 +89,24 @@ def create_presentation_prompt(data: PresentationRequest) -> tuple:
     
     return prompt, max_tokens
 
+def filter_sentences(text: str) -> str:
+    """
+    스크립트를 문장 단위로 분리한 후,
+    *, #, - 와 같은 특수문자가 하나라도 포함된 문장은 전부 삭제합니다.
+    """
+    # 먼저 개행 문자 기준으로 분리하고, 이후 문장부호(.!? 뒤) 기준으로 추가 분리합니다.
+    lines = []
+    for line in text.splitlines():
+        # 줄 내에 문장부호가 있는 경우 더 세분화
+        sentences = re.split(r'(?<=[.!?])\s+', line)
+        lines.extend(sentences)
+    
+    # 지정한 특수문자가 하나라도 포함된 문장은 제거
+    filtered_sentences = [s for s in lines if not re.search(r'[\*\#\-]', s)]
+    
+    # 남은 문장을 다시 하나의 텍스트로 합칩니다.
+    return " ".join(filtered_sentences)
+
 @app.get("/")
 def read_root():
     return {"message": "FastAPI AI Presentation Script Generator is running!"}
@@ -107,7 +123,7 @@ async def predict(data: PresentationRequest):
         prompt, max_tokens = create_presentation_prompt(data)
         
         response = openai.ChatCompletion.create(
-            model="gpt-3.5",
+            model="gpt-3.5-turbo",
             messages=[
                 {
                     "role": "system",
@@ -127,7 +143,9 @@ async def predict(data: PresentationRequest):
         )
         
         script = response.choices[0].message.content
-        return {"script": script}
+        # 생성된 스크립트에서 *, #, - 와 같은 특수문자가 포함된 문장을 완전히 삭제합니다.
+        filtered_script = filter_sentences(script)
+        return {"script": filtered_script}
         
     except openai.error.OpenAIError as e:
         raise HTTPException(
@@ -143,5 +161,3 @@ async def predict(data: PresentationRequest):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=5000)
-
-

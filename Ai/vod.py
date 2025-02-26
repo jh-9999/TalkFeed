@@ -4,9 +4,18 @@ import subprocess
 import cv2
 import logging
 import requests  # 반드시 설치되어 있어야 합니다.
-from fastapi import FastAPI, HTTPException, File, UploadFile, BackgroundTasks
+from fastapi import FastAPI, HTTPException, File, UploadFile, BackgroundTasks, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from emotion import analyze_single_image  # emotion.py의 analyze_single_image 함수
+from dotenv import load_dotenv
+
+# 환경 변수 로드
+load_dotenv()
+
+# AWS 환경 변수가 제대로 로드되었는지 확인 (이 부분은 감정 분석 관련 emotion.py에서 사용됨)
+if not os.getenv("AWS_ACCESS_KEY_ID") or not os.getenv("AWS_SECRET_ACCESS_KEY"):
+    raise Exception("AWS credentials not found. Please set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in your .env file.")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -102,14 +111,29 @@ def get_audio(filename: str):
 def read_root():
     return {"message": "vod.py is running"}
 
-# 백그라운드 작업: speed.py의 /upload-audio 엔드포인트로 오디오 파일 전송
+# 백그라운드 작업: Whisper 분석 트리거
+def trigger_whisper_analysis(audio_path: str, original_script: str):
+    # 변경된 URL: whisper 앱의 /update-results 엔드포인트
+    whisper_url = "http://localhost:8000/whisper/update-results"
+    logger.info("Sending audio file and original script to whisper analysis endpoint (background)...")
+    with open(audio_path, "rb") as audio_file:
+        files = {"file": (os.path.basename(audio_path), audio_file, "audio/mpeg")}
+        data = {"original_script": original_script}
+        try:
+            response = requests.post(whisper_url, files=files, data=data, timeout=60)
+            if response.status_code != 200:
+                logger.error(f"Whisper analysis failed: {response.text}")
+            else:
+                logger.info(f"Whisper analysis triggered successfully: {response.json()}")
+        except Exception as e:
+            logger.error(f"Error triggering whisper analysis in background: {e}")
+# 기존 속도 분석 트리거 (유지)
 def trigger_speed_analysis(audio_path: str):
     speed_url = "http://localhost:8000/speed/upload-audio"
     logger.info("Sending audio file to speed analysis endpoint (background)...")
     with open(audio_path, "rb") as audio_file:
         files = {"audio": (os.path.basename(audio_path), audio_file, "audio/mpeg")}
         try:
-            # 타임아웃을 60초로 설정
             speed_response = requests.post(speed_url, files=files, timeout=60)
             if speed_response.status_code != 200:
                 logger.error(f"Speed analysis failed: {speed_response.text}")
@@ -118,8 +142,13 @@ def trigger_speed_analysis(audio_path: str):
         except Exception as e:
             logger.error(f"Error triggering speed analysis in background: {e}")
 
+# vod.py의 /upload/ 엔드포인트: 원본 스크립트도 Form 필드로 받음
 @app.post("/upload/")
-async def upload_video(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
+async def upload_video(
+    file: UploadFile = File(...),
+    original_script: str = Form(...),
+    background_tasks: BackgroundTasks = None
+):
     try:
         clear_previous_files()
         
@@ -159,17 +188,55 @@ async def upload_video(file: UploadFile = File(...), background_tasks: Backgroun
         
         extract_images(video_path, EXTRACTED_FRAMES_DIR, interval_seconds=5)
         
-        # 백그라운드 작업으로 speed.py 분석 요청 트리거
+        # 백그라운드 작업: 속도 분석 트리거
         if background_tasks is not None:
             background_tasks.add_task(trigger_speed_analysis, audio_path)
         else:
             trigger_speed_analysis(audio_path)
         
+        # 백그라운드 작업: Whisper 분석 트리거 (원본 스크립트가 있으면 실행)
+        if original_script.strip():
+            if background_tasks is not None:
+                background_tasks.add_task(trigger_whisper_analysis, audio_path, original_script)
+            else:
+                trigger_whisper_analysis(audio_path, original_script)
+        else:
+            logger.info("No original script provided, skipping whisper analysis trigger.")
+        
+        # 자동 emotion 분석: 추출된 이미지들에 대해 emotion.py의 analyze_single_image 함수 호출
+        emotion_analysis_results = {}
+        extracted_files = os.listdir(EXTRACTED_FRAMES_DIR)
+        for filename in extracted_files:
+            image_path = os.path.join(EXTRACTED_FRAMES_DIR, filename)
+            try:
+                with open(image_path, "rb") as f:
+                    image_bytes = f.read()
+                result = analyze_single_image(image_bytes)
+                emotion_analysis_results[filename] = result
+            except Exception as e:
+                logger.error(f"Error analyzing emotion for {filename}: {e}")
+        logger.info(f"Emotion analysis results: {emotion_analysis_results}")
+        
+        # POST로 emotion 분석 결과 업데이트 (emotion.py의 /update-results 엔드포인트 호출)
+        try:
+            update_response = requests.post(
+                "http://localhost:8000/emotion/update-results",
+                json=emotion_analysis_results,
+                timeout=60
+            )
+            if update_response.status_code != 200:
+                logger.error(f"Emotion update failed: {update_response.text}")
+            else:
+                logger.info("Emotion results updated successfully via POST /emotion/update-results")
+        except Exception as e:
+            logger.error(f"Error updating emotion results: {e}")
+        
         return {
             "message": "Video processed successfully",
             "mp4_file": mp4_path,
             "audio_file": audio_path,
-            "video_file": video_path
+            "video_file": video_path,
+            "emotion_analysis": emotion_analysis_results
         }
         
     except Exception as e:
