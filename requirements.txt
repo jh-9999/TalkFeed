@@ -14,7 +14,6 @@ certifi==2025.1.31
 charset-normalizer==3.4.1
 click==8.1.8
 colorama==0.4.6
-deepface==0.0.93
 distro==1.9.0
 dnspython==2.7.0
 email_validator==2.2.0
@@ -74,7 +73,6 @@ python-multipart==0.0.20
 pytz==2025.1
 PyYAML==6.0.2
 requests==2.32.3
-retina-face==0.0.17
 rich==13.9.4
 rich-toolkit==0.13.2
 s3transfer==0.11.2
@@ -86,9 +84,7 @@ soupsieve==2.6
 starlette==0.45.3
 tensorboard==2.18.0
 tensorboard-data-server==0.7.2
-tensorflow==2.18.0
 termcolor==2.5.0
-tf_keras==2.18.0
 tqdm==4.67.1
 typer==0.15.1
 typing_extensions==4.12.2
