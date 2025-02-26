@@ -23,3 +23,4 @@ TalkFeed/backend/src/>`node index.js`
 
 # Error
 npm 실행 시 error 발생 -> `npm i`\
+react 페이지 접속 시 error 발생 -> `npm install chart.js react-chartjs-2`
