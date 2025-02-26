@@ -8,6 +8,7 @@ RUN npm run build
 
 # 2단계: Nginx 이미지에 빌드 결과 복사
 FROM nginx:alpine
+RUN mkdir -p /var/cache/nginx/client_temp && chmod -R 777 /var/cache/nginx/client_temp
 # Nginx 기본 설정 파일 덮어쓰기를 원한다면 아래처럼 COPY 가능:
 # COPY default.conf /etc/nginx/conf.d/default.conf
 
