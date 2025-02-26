@@ -4,11 +4,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # "Ai"라는 패키지 내부의 모듈로 import
-from Ai.vod import app as vod_app
-from Ai.speed import app as speed_app
-from Ai.main import app as main_app
-from Ai.whisper_test import app as whisper_app
-from Ai.emotion import app as emotion_app
+from vod import app as vod_app
+from speed import app as speed_app
+from main import app as main_app
+from whisper_test import app as whisper_app
+from emotion import app as emotion_app
 
 app = FastAPI()
 
