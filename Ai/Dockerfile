@@ -19,4 +19,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . /app
 
 # FastAPI 서버 실행 (Ai.end:app)
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "Ai.end:app", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "end:app", "--bind", "0.0.0.0:8000"]
+
