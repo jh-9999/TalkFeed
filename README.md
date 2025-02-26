@@ -22,6 +22,14 @@ TalkFeed/Frontend/>`npm start`\
 TalkFeed/backend/src/>`node index.js`
 
 # Error
-npm 실행 시 error 발생 -> `npm i`\
-react 페이지 접속 시 error 발생 -> `npm install chart.js react-chartjs-2`\
-동영상 업로드 시 동영상 이름은 영어로
+
+**npm 실행 시**\
+my-app@0.1.0 start\
+react-scripts start\
+'react-scripts'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는 배치 파일이 아닙니다.\
+error 발생 -> `npm i`
+
+**react 페이지 접속 시**\
+error 발생 -> `npm install chart.js react-chartjs-2`
+
+**동영상 업로드 시 동영상 이름은 영어로**
