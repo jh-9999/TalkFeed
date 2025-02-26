@@ -1,5 +1,5 @@
 // import Emotion from './components/Emotion';
-import Main from './components/Main';
+// import Main from './components/Main';
 import React from "react";
 import StartPage from "./components/Pages/StartPage";
 import Onboarding from './components/Pages/Onboarding';
@@ -40,7 +40,7 @@ const App = () => {
         <Route path="/feedback-speed" element={<FeedbackSpeed />} />
         <Route path="/feedback-whisper" element={<FeedbackWhisper />} />
       </Routes>
-      <Main />
+      {/* <Main /> */}
       
     </div>
   );

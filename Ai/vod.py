@@ -7,7 +7,7 @@ import requests  # 반드시 설치되어 있어야 합니다.
 from fastapi import FastAPI, HTTPException, File, UploadFile, BackgroundTasks, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from emotion import analyze_single_image  # emotion.py의 analyze_single_image 함수
+from .emotion import analyze_single_image  # emotion.py의 analyze_single_image 함수
 from dotenv import load_dotenv
 
 # 환경 변수 로드
