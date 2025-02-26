@@ -6,8 +6,8 @@ node.js
 
 # aip 키
 openai, aws 키 필요\
-`TalkFeed/Ai/`폴더에 openai, aws 키 위치\
-`TalkFeed/backend/src/`폴더에 openai 키 위치
+`ai/`폴더에 openai, aws 키 위치\
+`backend/src/`폴더에 openai 키 위치
 
 
 # 라이브러리 설치
@@ -23,4 +23,5 @@ TalkFeed/backend/src/>`node index.js`
 
 # Error
 npm 실행 시 error 발생 -> `npm i`\
-react 페이지 접속 시 error 발생 -> `npm install chart.js react-chartjs-2`
+react 페이지 접속 시 error 발생 -> `npm install chart.js react-chartjs-2`\
+동영상 업로드 시 동영상 이름은 영어로
