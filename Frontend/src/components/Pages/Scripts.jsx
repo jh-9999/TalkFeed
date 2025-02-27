@@ -5,7 +5,6 @@ import "./Scripts.css";
 function Scripts() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [showModal, setShowModal] = useState(false);
   const [script, setScript] = useState(""); // 스크립트 상태 추가
 
   const handleScriptChange = (e) => {
@@ -17,9 +16,13 @@ function Scripts() {
     navigate("/uploadvideo", { state: { original_script: script } });
   };
 
+  // "스크립트 생성" 버튼 클릭 시 바로 /create-scripts 페이지로 이동
+  const handleCreateScript = () => {
+    navigate("/create-scripts");
+  };
+
   return (
     <div className="scripts-container">
-
       {/* ✅ TalkFeed 로고 & 햄버거 메뉴 아이콘 추가 */}
       <div className="header">
         <h1 className="header-title">TalkFeed</h1>
@@ -63,35 +66,12 @@ function Scripts() {
         완료
       </button>
 
-      {/* 스크립트 생성 버튼 (모달 열기) */}
-      <div className="scripts-create" onClick={() => setShowModal(true)}>
+      {/* 스크립트 생성 버튼: 클릭 시 바로 /create-scripts 페이지로 이동 */}
+      <div className="scripts-create" onClick={handleCreateScript}>
         <span className="material-icons">add_circle_outline</span>
         <span className="scripts-create-text">스크립트 생성</span>
         <span className="material-icons">arrow_forward</span>
       </div>
-
-      {/* 모달 창 */}
-      {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <span className="modal-title">스크립트 생성 예시</span>
-            </div>
-            <p className="modal-description">
-              • 발표 스크립트 주제, 목차 등 간단히 입력
-            </p>
-            <button
-              className="modal-next-button"
-              onClick={() => {
-                setShowModal(false);
-                navigate("/create-scripts");
-              }}
-            >
-              생성
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

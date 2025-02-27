@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate, useLocation } from "react-router-dom"; 
 import {
   Chart as ChartJS,
@@ -15,35 +15,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 function Feedback() {
   const navigate = useNavigate();
   const location = useLocation(); 
-
-  // LLM 총평 상태 변수
-  const [llmFeedback, setLlmFeedback] = useState("");
-
-  // 백엔드에서 총평 가져오기
-  useEffect(() => {
-    const fetchFeedback = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/generate-feedback", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          mode: "cors",  // ✅ CORS 요청 모드 설정 (명확히 지정)
-          credentials: "include",  // ✅ 인증 관련 CORS 문제 방지
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setLlmFeedback(data.feedback);
-      } catch (error) {
-        console.error("LLM 총평 불러오기 에러:", error);
-        setLlmFeedback("총평을 불러오는 중 오류가 발생했습니다.");
-      }
-    };
-
-    fetchFeedback();
-  }, []);
 
   // 도넛 차트 데이터 설정
   const data = {
@@ -123,16 +94,7 @@ function Feedback() {
         </div>
       </div>
 
-      {/* 1번 영역: LLM 총평 영역 */}
-      <div className="feedback-detail-grid">
-        <div className="feedback-detail-item">
-          {llmFeedback ? (
-            <p>{llmFeedback}</p>
-          ) : (
-            <p>총평을 불러오는 중입니다...</p>
-          )}
-        </div>
-      </div>
+      {/* LLM 총평 영역 제거 */}
 
       {/* 분석 상세 결과 위의 구분선 */}
       <div className="feedback-divider"></div>
