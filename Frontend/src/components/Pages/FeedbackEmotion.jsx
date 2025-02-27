@@ -79,23 +79,39 @@ function FeedbackEmotion() {
 
   return (
     <div className="feedback-emotion-container">
-
-      {/* ✅ TalkFeed 로고 & 햄버거 메뉴 아이콘 추가 */}
+      {/* 헤더 */}
       <div className="header">
         <h1 className="header-title">TalkFeed</h1>
         <span className="material-icons menu-icon">menu</span>
       </div>
 
       <div className="feedback-nav">
-        <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>Scripts</span>
-        <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>Video</span>
-        <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>Feedback</span>
+        <span
+          className={location.pathname.includes("scripts") ? "active-tab" : ""}
+          onClick={() => navigate("/scripts")}
+        >
+          Scripts
+        </span>
+        <span
+          className={location.pathname.includes("video") ? "active-tab" : ""}
+          onClick={() => navigate("/uploadvideo")}
+        >
+          Video
+        </span>
+        <span
+          className={location.pathname.includes("feedback") ? "active-tab" : ""}
+          onClick={() => navigate("/feedback")}
+        >
+          Feedback
+        </span>
       </div>
 
       <div className="nav-underline"></div>
 
       <h2 className="emotion-title">표정 분석 결과</h2>
-      <span className="see-all" onClick={openPopup}>자세히 보기</span>
+      <span className="see-all" onClick={openPopup}>
+        자세히 보기
+      </span>
 
       <div className="chart-container">
         <div className="emotion-chart-wrapper">
@@ -108,15 +124,15 @@ function FeedbackEmotion() {
 
       <div className="feedback-list">
         <div className="feedback-item" onClick={() => navigate("/feedback")}>
-          <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" />&nbsp;전체 분석 결과
+          <img src={feedbackIcon} alt="전체 분석 아이콘" className="icon-img" /> 전체 분석 결과
           <span className="arrow">{">"}</span>
         </div>
         <div className="feedback-item" onClick={() => navigate("/feedback-speed")}>
-          <img src={feedbackIcon} alt="속도 분석 아이콘" className="icon-img" />&nbsp;속도 분석 결과
+          <img src={feedbackIcon} alt="속도 분석 아이콘" className="icon-img" /> 속도 분석 결과
           <span className="arrow">{">"}</span>
         </div>
         <div className="feedback-item" onClick={() => navigate("/feedback-whisper")}>
-          <img src={feedbackIcon} alt="발음 분석 아이콘" className="icon-img" />&nbsp;발음 분석 결과
+          <img src={feedbackIcon} alt="발음 분석 아이콘" className="icon-img" /> 발음 분석 결과
           <span className="arrow">{">"}</span>
         </div>
       </div>
@@ -128,15 +144,24 @@ function FeedbackEmotion() {
             {loading ? (
               <p>분석 결과 로딩 중...</p>
             ) : analysisResult ? (
-              <div className="result-box">
-                <p>Total Images: {aggregates.totalImages}</p>
-                <p>No Face Detected: {aggregates.noFaceCount}</p>
-                <p>Emotion Counts: {JSON.stringify(aggregates.emotionCounts)}</p>
-              </div>
+              <>
+                <div className="result-item">Total Images: {aggregates.totalImages}</div>
+                <div className="result-item">No Face Detected: {aggregates.noFaceCount}</div>
+                <div className="result-item">
+                  <div className="emotion-header">Emotion Counts:</div>
+                  {Object.entries(aggregates.emotionCounts).map(([emotion, count]) => (
+                    <div key={emotion} className="emotion-line">
+                      {emotion}: {count}
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : (
               <p>분석 결과가 없습니다.</p>
             )}
-            <button className="modal-close-button" onClick={closePopup}>닫기</button>
+            <button className="modal-close-button" onClick={closePopup}>
+              닫기
+            </button>
           </div>
         </div>
       )}

@@ -1,192 +1,228 @@
 .feedback-emotion-container {
-    position: relative; /* ✅ 부모 요소 기준으로 absolute 적용 */
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* ✅ 왼쪽 정렬 */
-    padding: 1rem;
-    background-color: #ffffff;
-  }
-  
-  /* 헤더 전체 스타일 */
-  .feedback-header {
-    width: 110%;
-    display: flex;
-    justify-content: space-between; /* 좌우 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
-    padding: 0rem 1.2rem;
-    position: relative; /* ✅ 개별 이동 가능하도록 설정 */
-    top: 10px;
-    right: 17px;
-  }
-  
-  /* TalkFeed 글씨 스타일 */
-  .feedback-header-title {
-    font-size: 1.7rem;
-    font-weight: bold;
-    color: black;
-  }
-  
-  /* 메뉴 아이콘 스타일 */
-  .feedback-menu-icon {
-    font-size: 1.3rem;
-    cursor: pointer;
-  }
-  
-  
-  
-  /* ✅ 네비게이션 바 스타일 (탭 메뉴) */
-  .feedback-nav {
-    justify-content: flex-start; /* 왼쪽 정렬 */
-    padding-right: 165px; /* 오른쪽 여백 추가 */
-    display: flex; /* 가로 정렬 */
-    justify-content: center; /* 중앙 정렬 */
-    gap: 20px; /* 각 탭 사이 간격 */
-    font-size: 1rem; /* 폰트 크기 */
-    margin-bottom: 4rem; /* 아래쪽 여백 */
-    position: relative; /* 위치 조정 가능하도록 설정 */
-    top: 20px; /* 위에서 20px 내려오도록 설정 */
-    left: 3px;
-  }
-  
-  /* ✅ 네비게이션 바의 개별 탭 스타일 */
-  .feedback-nav span {
-    color: gray; /* 기본 글자 색상 */
-    cursor: pointer; /* 마우스 오버 시 클릭 가능하도록 설정 */
-    font-weight: normal; /* 기본 글씨 굵기 */
-    position: relative; /* 위치 조정 가능하도록 설정 */
-    padding-bottom: 5px; /* 글자 아래 여백 */
-  }
-  
-  /* ✅ 선택된 탭 스타일 (현재 활성화된 탭) */
-  .feedback-nav .active-tab {
-    font-weight: bold; /* 글자 굵게 */
-    color: #003BD0; /* 글자 색상: 파란색 */
-    position: relative; /* 위치 조정 가능하도록 설정 */
-  }
-  
-  /* ✅ 선택된 탭 밑줄 스타일 */
-  .feedback-nav .active-tab::after {
-    content: ""; /* 가상 요소 생성 */
-    position: absolute; /* 위치 절대값 설정 */
-    bottom: 0; /* 아래쪽 정렬 */
-    left: 50%; /* 중앙 정렬 */
-    transform: translateX(-50%); /* 가로 방향 중앙 정렬 */
-    width: 100%; /* 밑줄 길이 */
-    height: 2px; /* 밑줄 두께 */
-    background-color: #003BD0; /* 밑줄 색상: 파란색 */
-    border-radius: 2px; /* 끝부분 둥글게 */
-  }
-  
-  
-  /* ✅ "분석결과" & "표정 분석 결과" 왼쪽 정렬 */
-  .emotion-title {
-    position: relative;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: left;
-    width: 100%;
-    display: block;
-    padding-left: 10px; /* ✅ 왼쪽 여백 */
-  }
-  
-  /* ✅ 도넛 차트와 점수 리스트를 감싸는 컨테이너 */
-  .chart-container {
-    display: flex; /* 가로 정렬 */
-    align-items: center; /* 가운데 정렬 */
-    justify-content: space-between; /* 양쪽 끝 정렬 */
-    width: 90%; /* 전체 너비의 90% 사용 */
-    margin-top: 20px; /* 위쪽 여백 */
-  }
-  
-  /* ✅ 도넛 차트 컨테이너 */
-  .emotion-chart-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 101px;
-    height: 101px; 
-    margin-left: 38px;
-  }
-  
-  /* ✅ 도넛 차트 내부 점수 텍스트 (오른쪽으로 이동) */
-  .emotion-chart-text {
-    position: absolute;
-    left: 150%;  /* ✅ 도넛 차트 기준 오른쪽으로 이동 */
-    top: 50%;    /* ✅ 중앙 정렬 */
-    transform: translateY(-58%); /* ✅ 세로 중앙 정렬 */
-    font-size: 36px;
-    font-weight: bold;
-    color: black;
-    white-space: nowrap; /* ✅ 텍스트가 줄 바꿈되지 않도록 설정 */
-  }
-  
-  
-  /* ✅ "전체 보기" 버튼 위치 조정 */
-  .see-all {
-    position: absolute;
-    top: 130px; /* ✅ 기존보다 위로 올림 */
-    right: 15px; /* ✅ 오른쪽 여백 조정 */
-    font-size: 14px;
-    color: #888;
-    cursor: pointer;
-    white-space: nowrap; /* ✅ 줄 바꿈 방지 */
-    z-index: 10; /* ✅ 다른 요소 위로 배치 */
-  }
-  
-  
-  /* ✅ 분석 상세 결과 리스트 위에 회색 박스 */
-  .feedback-divider {
-    width: 390px;
-    height: 4px;
-    background-color: #F5F5F5;
-    margin-bottom: 10px;
-  }
-  
-  /* ✅ 분석 상세 결과 리스트 */
-  .feedback-list {
-    max-width: 340px;
-    width: 100%;
-    padding: 0;
-  }
-  
-  /* ✅ 리스트 아이템 스타일 */
-  .feedback-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    font-size: 16px;
-    height: 60px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: bold;
-  }
-  
-  /* ✅ 아이콘 스타일 */
-  .icon {
-    font-size: 20px;
-    margin-right: 8px;
-  }
-  
-  /* ✅ 화살표 스타일 */
-  .arrow {
-    font-size: 20px;
-    margin-left: auto;
-    font-weight: bold;
-  }
-  
-  /* ✅ 리스트 아이템 호버 효과 */
-  .feedback-item:hover {
-    background: #f5f5f5;
-  }
-  
-  /* ✅ 이미지 아이콘 크기 및 정렬 */
-  .icon-img {
-    width: 20px;  /* ✅ 아이콘 크기 (원하는 크기로 조정 가능) */
-    height: 20px; /* ✅ 아이콘 크기 */
-    margin-right: 8px; /* ✅ 텍스트와 간격 조정 */
-    vertical-align: middle; /* ✅ 수직 정렬 */
-  }
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1rem;
+  background-color: #ffffff;
+}
+
+/* 헤더 전체 스타일 */
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* TalkFeed 글씨 스타일 */
+.header-title {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: black;
+}
+
+/* 메뉴 아이콘 스타일 */
+.menu-icon {
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+/* 네비게이션 바 스타일 (탭 메뉴) */
+.feedback-nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 1rem;
+  margin-bottom: 4rem;
+  position: relative;
+  top: 20px;
+  left: 3px;
+}
+
+/* 개별 탭 스타일 */
+.feedback-nav span {
+  color: gray;
+  cursor: pointer;
+  font-weight: normal;
+  position: relative;
+  padding-bottom: 5px;
+}
+
+/* 선택된 탭 스타일 */
+.active-tab {
+  font-weight: bold;
+  color: #003bd0;
+}
+
+/* 선택된 탭 밑줄 스타일 */
+.active-tab::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 2px;
+  background-color: #003bd0;
+  border-radius: 2px;
+}
+
+/* "표정 분석 결과" 제목 스타일 */
+.emotion-title {
+  position: relative;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: left;
+  width: 100%;
+  display: block;
+  padding-left: 10px;
+}
+
+/* 도넛 차트와 점수 리스트를 감싸는 컨테이너 */
+.chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 20px;
+}
+
+/* 도넛 차트 컨테이너 */
+.emotion-chart-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 101px;
+  height: 101px; 
+  margin-left: 38px;
+}
+
+/* 도넛 차트 내부 점수 텍스트 */
+.emotion-chart-text {
+  position: absolute;
+  left: 150%;
+  top: 50%;
+  transform: translateY(-58%);
+  font-size: 36px;
+  font-weight: bold;
+  color: black;
+  white-space: nowrap;
+}
+
+/* "자세히 보기" 버튼 위치 */
+.see-all {
+  position: absolute;
+  top: 130px;
+  right: 15px;
+  font-size: 14px;
+  color: #888;
+  cursor: pointer;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* 분석 상세 결과 구분선 */
+.feedback-divider {
+  width: 390px;
+  height: 4px;
+  background-color: #f5f5f5;
+  margin-bottom: 10px;
+}
+
+/* 분석 상세 결과 리스트 */
+.feedback-list {
+  max-width: 340px;
+  width: 100%;
+  padding: 0;
+}
+
+/* 리스트 아이템 스타일 */
+.feedback-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  font-size: 16px;
+  height: 60px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+}
+
+/* 아이콘 이미지 스타일 */
+.icon-img {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* 화살표 스타일 */
+.arrow {
+  font-size: 20px;
+  margin-left: auto;
+  font-weight: bold;
+}
+
+/* 리스트 아이템 호버 효과 */
+.feedback-item:hover {
+  background: #f5f5f5;
+}
+
+/* 모달 오버레이 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+/* 모달 컨텐츠 스타일 */
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 결과 항목 박스 스타일 */
+.result-item {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+/* 감정 데이터 제목 스타일 */
+.emotion-header {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+/* 개별 감정 항목 스타일 (한 줄씩) */
+.emotion-line {
+  margin: 4px 0;
+}
+
+/* 모달 닫기 버튼 */
+.modal-close-button {
+  background: #003bd0;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}

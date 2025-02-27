@@ -68,7 +68,7 @@ function FeedbackSpeed() {
 
   return (
     <div className="feedback-emotion-container">
-      {/* ✅ TalkFeed 로고 & 햄버거 메뉴 아이콘 추가 */}
+      {/* 헤더 */}
       <div className="header">
         <h1 className="header-title">TalkFeed</h1>
         <span className="material-icons menu-icon">menu</span>
@@ -76,13 +76,21 @@ function FeedbackSpeed() {
 
       {/* 네비게이션 바 */}
       <div className="feedback-nav">
-        <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>Scripts</span>
-        <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>Video</span>
-        <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>Feedback</span>
+        <span className={location.pathname.includes("scripts") ? "active-tab" : ""} onClick={() => navigate("/scripts")}>
+          Scripts
+        </span>
+        <span className={location.pathname.includes("video") ? "active-tab" : ""} onClick={() => navigate("/uploadvideo")}>
+          Video
+        </span>
+        <span className={location.pathname.includes("feedback") ? "active-tab" : ""} onClick={() => navigate("/feedback")}>
+          Feedback
+        </span>
       </div>
 
       <h2 className="emotion-title">속도 분석 결과</h2>
-      <span className="see-all" onClick={openPopup}>자세히 보기</span>
+      <span className="see-all" onClick={openPopup}>
+        자세히 보기
+      </span>
 
       <div className="chart-container">
         <div className="emotion-chart-wrapper">
@@ -122,9 +130,6 @@ function FeedbackSpeed() {
                       시작 : {formatTime(seg.start_time)} | 종료 : {formatTime(seg.end_time)}
                     </p>
                     <p>
-                      길이 : {formatTime(seg.duration)} | 볼륨 : {seg.volume.toFixed(2)}dB
-                    </p>
-                    <p>
                       속도 : {seg.rate}
                     </p>
                   </div>
@@ -133,7 +138,9 @@ function FeedbackSpeed() {
             ) : (
               <p>분석 결과가 없습니다.</p>
             )}
-            <button className="modal-close-button" onClick={closePopup}>닫기</button>
+            <button className="modal-close-button" onClick={closePopup}>
+              닫기
+            </button>
           </div>
         </div>
       )}

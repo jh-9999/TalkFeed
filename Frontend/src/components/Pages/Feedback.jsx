@@ -50,7 +50,7 @@ function Feedback() {
     labels: ["표정", "속도", "발음"],
     datasets: [
       {
-        data: [75, 90, 85], 
+        data: [75, 85, 85], 
         backgroundColor: ["#3366FF", "#2ECC71", "#F4A62A"], 
         hoverBackgroundColor: ["#1D4ED8", "#27AE60", "#E67E22"],
         borderWidth: 0, 
@@ -115,7 +115,7 @@ function Feedback() {
                 <span className="dot blue"></span> <span className="score-label">표정</span>&nbsp;&nbsp;&nbsp;<span className="score">75점</span>
             </div>
             <div className="score-item">
-                <span className="dot green"></span> <span className="score-label">속도</span>&nbsp;&nbsp;&nbsp;<span className="score">90점</span>
+                <span className="dot green"></span> <span className="score-label">속도</span>&nbsp;&nbsp;&nbsp;<span className="score">85점</span>
             </div>
             <div className="score-item">
                 <span className="dot orange"></span> <span className="score-label">발음</span>&nbsp;&nbsp;&nbsp;<span className="score">85점</span>
